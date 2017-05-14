@@ -1,12 +1,13 @@
-virtual class base_driver #(
-    type IFC=virtual base_ifc, 
+virtual class base_monitor #(
+    type IFC=virtual base_ifc,
     type TLM=base_tlm
-) extends uvm_driver#(TLM);
+) extends uvm_monitor;
 
     `uvm_component_utils_begin(base_driver)
     `uvm_component_utils_end
 
     IFC ifc;
+    TLM tlm;
 
     string ifc_name;
 
@@ -14,7 +15,7 @@ virtual class base_driver #(
     // new - constructor
     function new (string name, uvm_component parent);
         super.new(name, parent);
-        $display{parent.get_name(),"_driver created"};
+        $display{parent.get_name(),"_monitor created"};
         ifc_name = {parent.get_name(),"_ifc"}
      endfunction : new
 
@@ -26,7 +27,7 @@ virtual class base_driver #(
         void'(uvm_resource_db#(IFC)::read_by_name(.scope("*"), .name(ifc_name), .val(ifc)));
 
         if( vif==null )
-            `uvm_fatal({parent.get_name()," DRIVER"},"Cannot get vif");
+            `uvm_fatal({parent.get_name()," MONITOR"},"Cannot get vif");
     endfunction: build_phase.......$
 
-endclass : base_driver
+endclass : base_monitor
