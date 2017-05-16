@@ -9,14 +9,18 @@ virtual class base_driver #(
     IFC ifc;
 
     string ifc_name;
+    string parent_name;
 
     // **********************************************************
     // new - constructor
     function new (string name, uvm_component parent);
         super.new(name, parent);
-        $display{parent.get_name(),"_driver created"};
-        ifc_name = {parent.get_name(),"_ifc"}
-     endfunction : new
+
+        parent_name = parent.get_name();
+        ifc_name = {parent_name,"_ifc"};
+
+        $display({parent_name,"_driver created"});
+    endfunction : new
 
     // **********************************************************$
     // build_phase
@@ -25,8 +29,8 @@ virtual class base_driver #(
 
         void'(uvm_resource_db#(IFC)::read_by_name(.scope("*"), .name(ifc_name), .val(ifc)));
 
-        if( vif==null )
-            `uvm_fatal({parent.get_name()," DRIVER"},"Cannot get vif");
-    endfunction: build_phase.......$
+        if( ifc==null )
+            `uvm_fatal({parent_name," DRIVER"},"Cannot get vif");
+    endfunction: build_phase
 
 endclass : base_driver

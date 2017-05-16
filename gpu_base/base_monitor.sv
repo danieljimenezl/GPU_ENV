@@ -10,14 +10,18 @@ virtual class base_monitor #(
     TLM tlm;
 
     string ifc_name;
+    string parent_name;
 
     // **********************************************************
     // new - constructor
     function new (string name, uvm_component parent);
         super.new(name, parent);
-        $display{parent.get_name(),"_monitor created"};
-        ifc_name = {parent.get_name(),"_ifc"}
-     endfunction : new
+
+        parent_name = parent.get_name();
+        ifc_name = {parent_name,"_ifc"};
+
+        $display({parent_name,"_monitor created"});
+    endfunction : new
 
     // **********************************************************$
     // build_phase
@@ -26,8 +30,8 @@ virtual class base_monitor #(
 
         void'(uvm_resource_db#(IFC)::read_by_name(.scope("*"), .name(ifc_name), .val(ifc)));
 
-        if( vif==null )
-            `uvm_fatal({parent.get_name()," MONITOR"},"Cannot get vif");
-    endfunction: build_phase.......$
+        if( ifc==null )
+            `uvm_fatal({parent_name," MONITOR"},"Cannot get vif");
+    endfunction: build_phase
 
 endclass : base_monitor
