@@ -51,4 +51,4 @@ virtual class base_agent #(
     endfunction
 
 
-endclass : hpn_agent
+endclass : base_agent
