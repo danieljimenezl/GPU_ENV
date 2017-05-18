@@ -9,6 +9,6 @@ package gpu_pkg;
     `include "base_driver.sv"
     `include "base_monitor.sv"
     `include "base_scoreboard.sv"
-    //`include "gpu_base/base_agent.sv"
+    `include "base_agent.sv"
 
 endpackage

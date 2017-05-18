@@ -8,6 +8,7 @@ virtual class base_monitor #(
 
     IFC ifc;
     TLM tlm;
+    integer file;
 
     string ifc_name;
     string parent_name;
