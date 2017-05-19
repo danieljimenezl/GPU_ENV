@@ -12,8 +12,8 @@ virtual class base_driver #(
     string ifc_name;
     string parent_name;
 
-    // **********************************************************
-    // new - constructor
+    //--------------------------------------------
+    // new
     function new (string name, uvm_component parent);
         super.new(name, parent);
 
@@ -23,7 +23,7 @@ virtual class base_driver #(
         $display({parent_name,"_driver created"});
     endfunction : new
 
-    // **********************************************************$
+    //--------------------------------------------
     // build_phase
     function void build_phase(uvm_phase phase);
         super.build_phase(phase);

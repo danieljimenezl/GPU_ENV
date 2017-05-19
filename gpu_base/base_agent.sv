@@ -14,8 +14,8 @@ virtual class base_agent #(
     `uvm_component_utils_begin(base_agent)
     `uvm_component_utils_end
 
-    // **********************************************************
-    // new - constructor
+    //--------------------------------------------
+    // new
     function new (string name, uvm_component parent);
         super.new(name, parent);
         $display({name,"_agent created"});
@@ -24,7 +24,7 @@ virtual class base_agent #(
     endfunction : new
 
 
-    // **********************************************************
+    //--------------------------------------------
     // build_phase
     function void build_phase(uvm_phase phase);
         super.build_phase(phase);
@@ -34,21 +34,21 @@ virtual class base_agent #(
 
         driver = DRV::type_id::create({agent_name,"_driver"},this);
         driver.file = file;
-    endfunction: build_phase
+    endfunction : build_phase
 
 
-    // **********************************************************
+    //--------------------------------------------
     // connect_phase
     function void connect_phase(uvm_phase phase);
 
     endfunction : connect_phase
 
 
-    // **********************************************************
+    //--------------------------------------------
     // final_phase
      function void final_phase(uvm_phase phase);
         $fclose(file);
-    endfunction
+    endfunction : final_phase
 
 
 endclass : base_agent
