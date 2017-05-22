@@ -4,15 +4,15 @@ virtual class base_agent #(
     type MON=base_monitor
 ) extends uvm_agent;
 
+    `uvm_component_utils_begin(base_agent)
+    `uvm_component_utils_end
+
     IFC ifc;
     MON monitor;
     DRV driver;
     integer file;
 
     string agent_name;
-
-    `uvm_component_utils_begin(base_agent)
-    `uvm_component_utils_end
 
     //--------------------------------------------
     // new

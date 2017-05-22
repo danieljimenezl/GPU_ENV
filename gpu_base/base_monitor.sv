@@ -3,7 +3,7 @@ virtual class base_monitor #(
     type TLM=base_tlm
 ) extends uvm_monitor;
 
-    `uvm_component_utils_begin(base_driver)
+    `uvm_component_utils_begin(base_monitor)
     `uvm_component_utils_end
 
     IFC ifc;
@@ -12,6 +12,7 @@ virtual class base_monitor #(
 
     string ifc_name;
     string parent_name;
+
 
     //--------------------------------------------
     // new
@@ -23,6 +24,7 @@ virtual class base_monitor #(
 
         $display({parent_name,"_monitor created"});
     endfunction : new
+
 
     //--------------------------------------------
     // build_phase
