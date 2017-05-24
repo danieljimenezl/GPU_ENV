@@ -10,3 +10,6 @@ UVM_ARGS = -uvm
 
 ALL:$
 	irun $(IRUN_ARGS) $(UVM_ARGS) $(BASE_FILES) $(GRAP_PIPELINE) ../gpu_pkg.sv ../gpu_tb.v
+
+clean:
+	rm -rf INCA_libs/ waves/ irun.*
