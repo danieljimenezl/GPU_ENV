@@ -1,6 +1,8 @@
 class gpu_config extends uvm_component;
 
     int config_db[string];
+    integer file;
+
     uvm_cmdline_processor cmd_args;
 
     `uvm_component_utils_begin(gpu_config)
@@ -33,7 +35,7 @@ class gpu_config extends uvm_component;
     //--------------------------------------------
     // Set configuration value
     function void set_config();
-        config_args[$];
+        string config_args[$];
         cmd_args.get_args(config_args);
 
         foreach ( config_args[s] ) begin

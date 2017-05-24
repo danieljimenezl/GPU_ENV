@@ -12,6 +12,7 @@ package gpu_pkg;
     `include "base_monitor.sv"
     `include "base_scoreboard.sv"
     `include "base_agent.sv"
+    `include "gpu_config.sv"
 
 
 
