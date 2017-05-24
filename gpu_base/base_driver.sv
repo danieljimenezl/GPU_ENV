@@ -7,6 +7,7 @@ virtual class base_driver #(
     `uvm_component_utils_end
 
     IFC ifc;
+    TLM tlm;
     integer file;
 
     string ifc_name;

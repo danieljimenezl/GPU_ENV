@@ -1,7 +1,7 @@
 interface divider_ifc();
 
-    logic in0_divider [15:0];
-    logic in1_divider [15:0];
-    logic out_divider [15:0];
+    logic [15:0] in0_divider;
+    logic [15:0] in1_divider;
+    logic [15:0] out_divider;
 
 endinterface : divider_ifc

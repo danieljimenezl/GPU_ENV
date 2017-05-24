@@ -1,7 +1,7 @@
 interface adder_ifc();
 
-    logic in0_adder [15:0];
-    logic in1_adder [15:0];
-    logic out_adder [15:0];
+    logic [15:0] in0_adder;
+    logic [15:0] in1_adder;
+    logic [15:0] out_adder;
 
 endinterface : adder_ifc    

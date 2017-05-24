@@ -24,7 +24,25 @@ class adder_driver extends base_driver#(
     //--------------------------------------------
     // run_phase
     task run_phase(uvm_phase phase);
-
+        input_values();
     endtask : run_phase
+
+
+     //--------------------------------------------
+    // input values
+    task input_values();
+        ifc.in0_adder <= 16'd0;
+        ifc.in1_adder <= 16'd0;
+
+        forever begin
+            adder_tlm tlm = new();
+            seq_item_port.get_next_item(tlm);
+
+            ifc.in0_adder <= tlm.in_0;
+            ifc.in1_adder <= tlm.in_1;
+
+            seq_item_port.item_done();
+        end
+    endtask : input_values
 
 endclass : adder_driver

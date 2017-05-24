@@ -1,7 +1,7 @@
 interface mult_ifc();
 
-    logic in0_mult [15:0];
-    logic in1_mult [15:0];
-    logic out_mult [15:0];
+    logic [15:0] in0_mult;
+    logic [15:0] in1_mult;
+    logic [15:0] out_mult;
 
 endinterface : mult_ifc

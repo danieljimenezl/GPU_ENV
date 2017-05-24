@@ -13,6 +13,8 @@ virtual class base_monitor #(
     string ifc_name;
     string parent_name;
 
+    uvm_analysis_port#(TLM) ch_out;
+
 
     //--------------------------------------------
     // new
