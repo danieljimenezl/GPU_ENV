@@ -24,30 +24,47 @@ package gpu_pkg;
 
     //  A D D E R
     `include "adder_seq.sv"
+    `include "adder_sequencer.sv"
     `include "adder_driver.sv"
     `include "adder_monitor.sv"
     `include "adder_agent.sv"
 
     //  M U L T I P L I E R
     `include "mult_seq.sv"
+    `include "mult_sequencer.sv"
     `include "mult_driver.sv"
     `include "mult_monitor.sv"
     `include "mult_agent.sv"
 
     //  D I V I D E R
     `include "divider_seq.sv"
+    `include "divider_sequencer.sv"
     `include "divider_driver.sv"
     `include "divider_monitor.sv"
     `include "divider_agent.sv"
+
+    //  P I P E L I N E
+    `include "pipeline_seq.sv"
+    `include "pipeline_sequencer.sv"
+    `include "pipeline_driver.sv"
+    `include "pipeline_monitor.sv"
+    `include "pipeline_agent.sv"
 
 
     //---------------------------------
     //  M E M O R Y  M A N A G E R
 
+    //  U A R T
+
+    //  S R A M
+
+    //  M E M O R Y  C O N T R O L E R
 
 
     ///////////////////////////////////////////////
     //  S O F T  L A Y E R
 
+
+    `include "../gpu_env.sv"
 
 endpackage

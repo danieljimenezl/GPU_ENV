@@ -51,9 +51,9 @@ class gpu_config extends uvm_component;
 
     //--------------------------------------------
     // Get configuration value
-    function int get_config(string key);
+    function int get_value(string key);
         return config_db[key];
-    endfunction : get_config
+    endfunction : get_value
 
 
     //--------------------------------------------

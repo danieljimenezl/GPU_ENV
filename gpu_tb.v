@@ -2,6 +2,7 @@
 `include "adder_ifc.sv"
 `include "mult_ifc.sv"
 `include "divider_ifc.sv"
+`include "pipeline_ifc.sv"
 
 module gpu_tb();
 

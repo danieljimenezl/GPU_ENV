@@ -24,7 +24,9 @@ class mult_driver extends base_driver#(
     //--------------------------------------------
     // run_phase
     task run_phase(uvm_phase phase);
-        input_values();
+        fork
+            input_values();
+        join
     endtask : run_phase
 
 
