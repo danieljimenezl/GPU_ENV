@@ -38,8 +38,15 @@ class divider_monitor extends base_monitor#(
             @(ifc.in0_divider, ifc.in1_divider);
                 tlm = new();
                 tlm.tlm_type = DIV_INPUTS;
-                tlm.in_0 = ifc.in0_divider;
-                tlm.in_1 = ifc.in1_divider;
+
+                tlm.in0_sign = ifc.in0_divider[0];
+                tlm.in0_exponent = ifc.in0_divider[5:1];
+                tlm.in0_mantissa = ifc.in0_divider[15:6];
+
+                tlm.in1_sign = ifc.in0_divider[0];
+                tlm.in1_exponent = ifc.in0_divider[5:1];
+                tlm.in1_mantissa = ifc.in0_divider[15:6];
+
                 ch_out.write(tlm);
         end
     endtask : input_values
@@ -52,7 +59,11 @@ class divider_monitor extends base_monitor#(
             @(ifc.out_divider);
                 tlm = new();
                 tlm.tlm_type = DIV_RESULT;
-                tlm.out = ifc.out_divider;
+
+                tlm.out_sign = ifc.out_divider[0];
+                tlm.out_exponent = ifc.out_divider[5:1];
+                tlm.out_mantissa = ifc.out_divider[15:6];
+
                 ch_out.write(tlm);
         end
     endtask : output_value

@@ -8,13 +8,26 @@ class divider_tlm extends base_tlm;
 
     divider_tlm_type tlm_type;
 
-    rand real in_0;
-    rand real in_1;
-    real out;
+    rand int in0_sign;
+    rand int in0_exponent;
+    rand int in0_mantissa;
+
+    rand int in1_sign;
+    rand int in1_exponent;
+    rand int in1_mantissa;
+
+    int out_sign;
+    int out_exponent;
+    int out_mantissa;
 
     constraint valid {
-        in_0 inside{0,65535};
-        in_1 inside{0,65535};
+        in0_sign inside {0,2};
+        in0_exponent inside {0,32};
+        in0_mantissa inside {0,1024};
+
+        in1_sign inside {0,2};
+        in1_exponent inside {0,32};
+        in1_mantissa inside {0,1024};
     }
 
 

@@ -24,6 +24,7 @@ package gpu_pkg;
 
     //  A D D E R
     `include "adder_seq.sv"
+    `include "adder_seq_lib.sv"
     `include "adder_sequencer.sv"
     `include "adder_driver.sv"
     `include "adder_monitor.sv"
@@ -31,6 +32,7 @@ package gpu_pkg;
 
     //  M U L T I P L I E R
     `include "mult_seq.sv"
+    `include "mult_seq_lib.sv"
     `include "mult_sequencer.sv"
     `include "mult_driver.sv"
     `include "mult_monitor.sv"
@@ -38,6 +40,7 @@ package gpu_pkg;
 
     //  D I V I D E R
     `include "divider_seq.sv"
+    `include "divider_seq_lib.sv"
     `include "divider_sequencer.sv"
     `include "divider_driver.sv"
     `include "divider_monitor.sv"
@@ -45,6 +48,7 @@ package gpu_pkg;
 
     //  P I P E L I N E
     `include "pipeline_seq.sv"
+    //`include "pipeline_seq_lib.sv"
     `include "pipeline_sequencer.sv"
     `include "pipeline_driver.sv"
     `include "pipeline_monitor.sv"
@@ -66,5 +70,6 @@ package gpu_pkg;
 
 
     `include "../gpu_env.sv"
+    `include "../gpu_test.sv"
 
 endpackage

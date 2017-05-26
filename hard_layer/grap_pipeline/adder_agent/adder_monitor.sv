@@ -38,8 +38,15 @@ class adder_monitor extends base_monitor#(
             @(ifc.in0_adder, ifc.in1_adder);
                 tlm = new();
                 tlm.tlm_type = ADD_INPUTS;
-                tlm.in_0 = ifc.in0_adder;
-                tlm.in_1 = ifc.in1_adder;
+
+                tlm.in0_sign = ifc.in0_adder[0];
+                tlm.in0_exponent = ifc.in0_adder[5:1];
+                tlm.in0_mantissa = ifc.in0_adder[15:6];
+
+                tlm.in1_sign = ifc.in0_adder[0];
+                tlm.in1_exponent = ifc.in0_adder[5:1];
+                tlm.in1_mantissa = ifc.in0_adder[15:6];
+
                 ch_out.write(tlm);
         end
     endtask : input_values
@@ -52,7 +59,11 @@ class adder_monitor extends base_monitor#(
             @(ifc.out_adder);
                 tlm = new();
                 tlm.tlm_type = ADD_RESULT;
-                tlm.out = ifc.out_adder;
+
+                tlm.out_sign = ifc.out_adder[0];
+                tlm.out_exponent = ifc.out_adder[5:1];
+                tlm.out_mantissa = ifc.out_adder[15:6];
+
                 ch_out.write(tlm);
         end
     endtask : output_value
