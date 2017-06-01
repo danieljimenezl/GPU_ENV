@@ -17,7 +17,7 @@ GPU_INTERFACES =../gpu_base/base_ifc.sv										\
 				../hard_layer/grap_pipeline/mult_agent/mult_ifc.sv 			\
 				../hard_layer/grap_pipeline/divider_agent/divider_ifc.sv	\
 				../hard_layer/grap_pipeline/pipeline_agent/pipeline_ifc.sv	\
-
+																			\
 				../hard_layer/memory_manager/uart_agent/uart_ifc.sv			\
 
 
