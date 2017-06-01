@@ -8,13 +8,17 @@ BASE_FILES = +incdir+../gpu_base/ \
 GRAP_PIPELINE = +incdir+../hard_layer/grap_pipeline/adder_agent/	\
 				+incdir+../hard_layer/grap_pipeline/mult_agent/ 	\
 				+incdir+../hard_layer/grap_pipeline/divider_agent/	\
-				+incdir+../hard_layer/grap_pipeline/pipeline_agent/ \
+				+incdir+../hard_layer/grap_pipeline/pipeline_agent/	\
+
+MEMORY_MANAGER = +incdir+../hard_layer/memory_manager/uart_agent/ \
 
 GPU_INTERFACES =../gpu_base/base_ifc.sv										\
 				../hard_layer/grap_pipeline/adder_agent/adder_ifc.sv		\
 				../hard_layer/grap_pipeline/mult_agent/mult_ifc.sv 			\
 				../hard_layer/grap_pipeline/divider_agent/divider_ifc.sv	\
 				../hard_layer/grap_pipeline/pipeline_agent/pipeline_ifc.sv	\
+
+				../hard_layer/memory_manager/uart_agent/uart_ifc.sv			\
 
 
 #//////////////////////////////////////////////////////////
@@ -36,7 +40,8 @@ UVM_ARGS = -uvm
 
 
 ALL:$
-	irun $(IRUN_ARGS) $(UVM_ARGS) $(RTL) $(BASE_FILES) $(GRAP_PIPELINE) $(GPU_INTERFACES) ../gpu_pkg.sv ../gpu_tb.v
+
+	irun $(IRUN_ARGS) $(UVM_ARGS) $(RTL) $(BASE_FILES) $(GRAP_PIPELINE) $(GPU_INTERFACES) $(MEMORY_MANAGER) ../gpu_pkg.sv ../gpu_tb.v
 
 clean:
 	rm -rf INCA_libs/ waves/ irun.*
