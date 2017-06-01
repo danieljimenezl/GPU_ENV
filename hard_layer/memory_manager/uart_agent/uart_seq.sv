@@ -1,35 +1,34 @@
 typedef enum {
-    ADD_RESULT,
-    ADD_INPUTS
+    UART_GPU_INPUT,
+    UART_GPU_OUTPUT
 } uart_tlm_type;
 
+typedef enum {
+    INITIALIZE  =   'hAAAA,
+    ENABLE      =   'hCCCC,
+    CAM_CONFIG  =   'hBBBB,
+    CREATE_OBJ  =   'hEEEE,
+    ADD_VERT    =   'h9999,
+    CLOSE_OBJ   =   'h8888,
+    MODIFY_OBJ  =   'hABCD,
+    REFRESH     =   'h1234,
+    ERROR       =   'h1414,
+    BUSY        =   'h4141,
+    END         =   'hFFFF,
+    DATA        =   'h1111,
+    ADDRESS     =   'h0000
+} uart_tlm_cmd;
 
 class uart_tlm extends base_tlm;
 
     uart_tlm_type tlm_type;
+    uart_tlm_cmd tlm_cmd;
 
-    rand int in0_sign;
-    rand int in0_exponent;
-    rand int in0_mantissa;
-
-    rand int in1_sign;
-    rand int in1_exponent;
-    rand int in1_mantissa;
-
-    int out_sign;
-    int out_exponent;
-    int out_mantissa;
+    rand int data;
 
     constraint valid {
-        in0_sign inside {0,2};
-        in0_exponent inside {0,32};
-        in0_mantissa inside {0,1024};
-
-        in1_sign inside {0,2};
-        in1_exponent inside {0,32};
-        in1_mantissa inside {0,1024};
+        data inside {0,32'hFFFF};
     }
-
 
     `uvm_object_utils_begin(uart_tlm)
         `uvm_field_enum(uart_tlm_type, tlm_type, UVM_DEFAULT)

@@ -59,6 +59,12 @@ package gpu_pkg;
     //  M E M O R Y  M A N A G E R
 
     //  U A R T
+    `include "uart_seq.sv"
+    `include "uart_seq_lib.sv"
+    `include "uart_sequencer.sv"
+    `include "uart_driver.sv"
+    `include "uart_monitor.sv"
+    `include "uart_agent.sv"
 
     //  S R A M
 

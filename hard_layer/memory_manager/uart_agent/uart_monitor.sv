@@ -25,15 +25,15 @@ class uart_monitor extends base_monitor#(
     // run_phase
     task run_phase(uvm_phase phase);
         fork
-            input_values();
-            output_value();
+            //input_values();
+            //output_value();
         join
     endtask : run_phase
 
 
     //--------------------------------------------
     // input values
-    task input_values();
+    /*task input_values();
         forever begin
             @(ifc.in0_uart, ifc.in1_uart);
                 tlm = new();
@@ -66,6 +66,6 @@ class uart_monitor extends base_monitor#(
 
                 ch_out.write(tlm);
         end
-    endtask : output_value
+    endtask : output_value*/
 
 endclass : uart_monitor

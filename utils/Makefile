@@ -3,14 +3,16 @@ BASE_FILES = +incdir+../gpu_base/ \
 GRAP_PIPELINE = +incdir+../hard_layer/grap_pipeline/adder_agent/	\
 				+incdir+../hard_layer/grap_pipeline/mult_agent/ 	\
 				+incdir+../hard_layer/grap_pipeline/divider_agent/	\
-				+incdir+../hard_layer/grap_pipeline/pipeline_agent/ \
+				+incdir+../hard_layer/grap_pipeline/pipeline_agent/	\
+
+MEMORY_MANAGER = +incdir+../hard_layer/memory_manager/uart_agent/ \
 
 IRUN_ARGS = -sv '+tcl+dump.tcl' -access +rwc
 
 UVM_ARGS = -uvm
 
 ALL:$
-	irun $(IRUN_ARGS) $(UVM_ARGS) $(BASE_FILES) $(GRAP_PIPELINE) ../gpu_pkg.sv ../gpu_tb.v
+	irun $(IRUN_ARGS) $(UVM_ARGS) $(BASE_FILES) $(GRAP_PIPELINE) $(MEMORY_MANAGER) ../gpu_pkg.sv ../gpu_tb.v
 
 clean:
 	rm -rf INCA_libs/ waves/ irun.*

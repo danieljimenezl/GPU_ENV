@@ -13,7 +13,6 @@ class uart_driver extends base_driver#(
         super.new(name, parent);
     endfunction : new
 
-
     //--------------------------------------------
     // build_phase
     function void build_phase(uvm_phase phase);
@@ -25,22 +24,42 @@ class uart_driver extends base_driver#(
     // run_phase
     task run_phase(uvm_phase phase);
         fork
-            nombre_task();
+            drive();
         join
     endtask : run_phase
 
 
      //--------------------------------------------
     // nombre task
-    task nombre_task();
+    task drive();
+        int data_high;
+        int data_low;
+
         forever begin
             uart_tlm tlm = new();
             seq_item_port.get_next_item(tlm);
 
-            //acciones
+            data_low = tlm.tlm_cmd & 32'hFF;
+            data_high = (tlm.tlm_cmd>>8) & 32'hFF;
+
+            if (tlm.tlm_cmd == DATA || tlm.tlm_cmd == ADDRESS) begin
+                data_low = tlm.data & 32'hFF;
+                data_high = (tlm.data>>8) & 32'hFF;
+            end
+
+            ifc.rx_byte<=data_high;
+            @(posedge ifc.clk);
+                ifc.rx_ready<=1;
+            @(posedge ifc.clk)
+                ifc.rx_ready<=0;
+            ifc.rx_byte<=data_low;
+            @(posedge ifc.clk);
+                ifc.rx_ready<=1;
+            @(posedge ifc.clk)
+                ifc.rx_ready<=0;
 
             seq_item_port.item_done();
         end
-    endtask : nombre_task
+    endtask : drive
 
 endclass : uart_driver
