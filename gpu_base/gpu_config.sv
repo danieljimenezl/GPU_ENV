@@ -13,6 +13,7 @@ class gpu_config extends uvm_component;
     // new
     function new (string name, uvm_component parent);
         super.new(name, parent);
+        cmd_args =  uvm_cmdline_processor::get_inst();
 
         // Graphic Pipeline
         config_db["GPU_PIPELINE_ADDER"] = 0;
@@ -41,7 +42,7 @@ class gpu_config extends uvm_component;
         foreach ( config_args[s] ) begin
             if( config_args[s] == "-define" ) begin
                 foreach ( config_db[r] ) begin
-                    if(config_args[s+1] == config_db[r])
+                    if(config_args[s+1] == r)
                         config_db[r] = 1;
                 end
             end
@@ -61,7 +62,7 @@ class gpu_config extends uvm_component;
     function void report_phase(uvm_phase phase);
         file = $fopen("gpu_config.log","w");
         foreach( config_db[i] )
-            $fwrite(file,"gpu_config:   %s  ---->   %0d",i,config_db[i]);
+            $fwrite(file,"gpu_config:   %s  ---->   %0d\n",i,config_db[i]);
         $fclose(file);
     endfunction : report_phase
 

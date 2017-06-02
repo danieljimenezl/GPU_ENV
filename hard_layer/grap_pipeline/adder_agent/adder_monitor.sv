@@ -47,7 +47,7 @@ class adder_monitor extends base_monitor#(
                 tlm.in1_exponent = ifc.in0_adder[5:1];
                 tlm.in1_mantissa = ifc.in0_adder[15:6];
 
-                ch_out.write(tlm);
+                //ch_out.write(tlm);
         end
     endtask : input_values
 
@@ -64,7 +64,7 @@ class adder_monitor extends base_monitor#(
                 tlm.out_exponent = ifc.out_adder[5:1];
                 tlm.out_mantissa = ifc.out_adder[15:6];
 
-                ch_out.write(tlm);
+                //ch_out.write(tlm);
         end
     endtask : output_value
 

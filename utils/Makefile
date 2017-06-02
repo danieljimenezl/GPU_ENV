@@ -36,7 +36,7 @@ RTL = 	../../rtl/graphic_pipeline/adder/*.v			\
 
 IRUN_ARGS = -sv '+tcl+dump.tcl' -access +rwc
 
-UVM_ARGS = -uvm
+UVM_ARGS = -uvm -define GPU_PIPELINE_ADDER
 
 
 ALL:$
@@ -44,4 +44,4 @@ ALL:$
 	irun $(IRUN_ARGS) $(UVM_ARGS) $(RTL) $(BASE_FILES) $(GRAP_PIPELINE) $(GPU_INTERFACES) $(MEMORY_MANAGER) ../gpu_pkg.sv ../gpu_tb.v
 
 clean:
-	rm -rf INCA_libs/ waves/ irun.*
+	rm -rf INCA_libs/ waves/ irun.* *.log
