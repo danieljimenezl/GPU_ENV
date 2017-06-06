@@ -1,6 +1,6 @@
 interface uart_ifc();
 
-    logic       clk;
+    base_ifc base();
     logic [7:0] rx_byte;
     logic [7:0] tx_byte;
     logic       rx_ready;

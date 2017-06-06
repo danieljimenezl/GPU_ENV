@@ -7,16 +7,13 @@ UART ?= 0
 DRAM ?= 0
 SYSTEM ?= 0
 
-ifeq ($(ADDER),1)
-	TEST=GPU_PIPLINE_ADDER
-endif
-
 #//////////////////////////////////////////////////////////
-#	E N V I R O N M E N T    F I L E S
+#		E N V I R O N M E N T    F I L E S
 #//////////////////////////////////////////////////////////
 
 
-BASE_FILES = +incdir+../gpu_base/ \
+GPU_SV = +incdir+../	\
+BASE_FILES = +incdir+../gpu_base/	\
 
 GRAP_PIPELINE = +incdir+../hard_layer/grap_pipeline/adder_agent/	\
 				+incdir+../hard_layer/grap_pipeline/mult_agent/ 	\
@@ -28,16 +25,10 @@ MEMORY_MANAGER = +incdir+../hard_layer/memory_manager/uart_agent/ \
 SOFT_LAYER = +incdir+../soft_layer/	\
 
 GPU_INTERFACES =../gpu_base/base_ifc.sv										\
-				../hard_layer/grap_pipeline/adder_agent/adder_ifc.sv		\
-				../hard_layer/grap_pipeline/mult_agent/mult_ifc.sv 			\
-				../hard_layer/grap_pipeline/divider_agent/divider_ifc.sv	\
-				../hard_layer/grap_pipeline/pipeline_agent/pipeline_ifc.sv	\
-																			\
-				../hard_layer/memory_manager/uart_agent/uart_ifc.sv			\
 
 
 #//////////////////////////////////////////////////////////
-#	V E R I L O G    F I L E S
+#				V E R I L O G    F I L E S
 #//////////////////////////////////////////////////////////
 
 
@@ -48,14 +39,45 @@ RTL = 	../../rtl/graphic_pipeline/adder/*.v			\
 
 
 #//////////////////////////////////////////////////////////
+#					T E S T S
+#//////////////////////////////////////////////////////////
+
+
+ifeq ($(ADDER),1)
+	TEST = 'GPU_PIPELINE_ADDER'
+	GPU_INTERFACES += '../hard_layer/grap_pipeline/adder_agent/adder_ifc.sv'
+endif
+
+ifeq ($(MULT),1)
+	TEST = 'GPU_PIPELINE_MULT'
+	GPU_INTERFACES += '../hard_layer/grap_pipeline/mult_agent/mult_ifc.sv'
+endif
+
+ifeq ($(DIVIDER),1)
+	TEST = 'GPU_PIPELINE_DIVIDER'
+	GPU_INTERFACES += '../hard_layer/grap_pipeline/divider_agent/divider_ifc.sv'
+endif
+
+ifeq ($(PIPELINE),1)
+	TEST = 'GPU_PIPELINE'
+	GPU_INTERFACES += '../hard_layer/grap_pipeline/pipeline_agent/pipeline_ifc.sv'
+endif
+
+ifeq ($(UART),1)
+	TEST = 'GPU_MEMORY_UART'
+	GPU_INTERFACES += '../hard_layer/memory_manager/uart_agent/uart_ifc.sv'
+endif
+
+
+#//////////////////////////////////////////////////////////
+
 
 IRUN_ARGS = -sv '+tcl+dump.tcl' -access +rwc
 
-UVM_ARGS = -uvm -define GPU_PIPELINE_ADDER
+UVM_ARGS = -uvm -define $(TEST)
 
 
-ALL:$
-
+ALL:
 	irun $(IRUN_ARGS) $(UVM_ARGS) $(RTL) $(BASE_FILES) $(GRAP_PIPELINE) $(MEMORY_MANAGER) $(SOFT_LAYER) $(GPU_INTERFACES) ../gpu_pkg.sv ../gpu_tb.v
 
 clean:
