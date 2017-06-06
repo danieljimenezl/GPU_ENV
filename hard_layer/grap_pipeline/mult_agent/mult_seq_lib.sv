@@ -21,6 +21,7 @@ class mult_sequence extends uvm_sequence #(mult_tlm);
             start_item(tlm);
             assert(tlm.randomize());
             finish_item(tlm);
+            #10;
         end
     endtask : body
 

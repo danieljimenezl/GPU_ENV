@@ -6,7 +6,8 @@ virtual class base_scoreboard extends uvm_component;
     //--------------------------------------------
     // new
     function new (string name, uvm_component parent);
-        super.new({name,"_scoreboard"}, parent);
+        super.new(name, parent);
+        $display({name," created"});
     endfunction : new
 
 endclass : base_scoreboard

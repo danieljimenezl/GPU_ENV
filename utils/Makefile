@@ -1,3 +1,15 @@
+
+ADDER ?= 1
+MULT ?= 0
+DIVIDER ?= 0
+PIPELINE ?= 0
+UART ?= 0
+DRAM ?= 0
+SYSTEM ?= 0
+
+ifeq($(ADDER),1)
+	TEST=GPU_PIPLINE_ADDER
+
 #//////////////////////////////////////////////////////////
 #	E N V I R O N M E N T    F I L E S
 #//////////////////////////////////////////////////////////
@@ -11,6 +23,8 @@ GRAP_PIPELINE = +incdir+../hard_layer/grap_pipeline/adder_agent/	\
 				+incdir+../hard_layer/grap_pipeline/pipeline_agent/	\
 
 MEMORY_MANAGER = +incdir+../hard_layer/memory_manager/uart_agent/ \
+
+SOFT_LAYER = +incdir+../soft_layer/	\
 
 GPU_INTERFACES =../gpu_base/base_ifc.sv										\
 				../hard_layer/grap_pipeline/adder_agent/adder_ifc.sv		\
@@ -29,7 +43,7 @@ GPU_INTERFACES =../gpu_base/base_ifc.sv										\
 RTL = 	../../rtl/graphic_pipeline/adder/*.v			\
 		../../rtl/graphic_pipeline/multiplier/*.v		\
 		../../rtl/graphic_pipeline/divider/*.v			\
-		../../rtl/graphic_pipeline/graphic_pipeline/*.v\
+		../../rtl/graphic_pipeline/graphic_pipeline/*.v	\
 
 
 #//////////////////////////////////////////////////////////
@@ -41,7 +55,7 @@ UVM_ARGS = -uvm -define GPU_PIPELINE_ADDER
 
 ALL:$
 
-	irun $(IRUN_ARGS) $(UVM_ARGS) $(RTL) $(BASE_FILES) $(GRAP_PIPELINE) $(GPU_INTERFACES) $(MEMORY_MANAGER) ../gpu_pkg.sv ../gpu_tb.v
+	irun $(IRUN_ARGS) $(UVM_ARGS) $(RTL) $(BASE_FILES) $(GRAP_PIPELINE) $(MEMORY_MANAGER) $(SOFT_LAYER) $(GPU_INTERFACES) ../gpu_pkg.sv ../gpu_tb.v
 
 clean:
 	rm -rf INCA_libs/ waves/ irun.* *.log

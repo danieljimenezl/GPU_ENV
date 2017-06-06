@@ -37,6 +37,8 @@ virtual class base_monitor #(
 
         if( ifc==null )
             `uvm_fatal({parent_name," MONITOR"},"Cannot get vif");
+
+        ch_out = new(.name("ch_out"), .parent(this)); 
     endfunction: build_phase
 
 endclass : base_monitor

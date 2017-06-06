@@ -14,6 +14,8 @@ class gpu_env extends uvm_env;
     divider_sequencer   divider_seq;
     pipeline_sequencer  pipeline_seq;
 
+    pipeline_scoreboard pipe_scoreboard;
+
     //--------------------------------------------
     // M E M O R Y  M A N A G E R
     //uart_agent      uart;
@@ -36,7 +38,7 @@ class gpu_env extends uvm_env;
     // build phase
     function void build_phase(uvm_phase phase);
         super.build_phase(phase);
-    
+
         if(CONFIG.get_value("GPU_PIPELINE_ADDER")) begin
             adder = adder_agent::type_id::create("adder",this);
             adder_seq = adder_sequencer::type_id::create("adder_seq",this);
@@ -53,20 +55,29 @@ class gpu_env extends uvm_env;
             pipeline = pipeline_agent::type_id::create("pipeline",this);
             pipeline_seq = pipeline_sequencer::type_id::create("pipeline_seq",this);
         end
+
+        pipe_scoreboard = pipeline_scoreboard::type_id::create("pipe_scoreboard",this);
     endfunction : build_phase
 
 
     //--------------------------------------------
     // connect phase
     function void connect_phase(uvm_phase phase);
-        if(CONFIG.get_value("GPU_PIPELINE_ADDER"))
+        if(!adder.monitor.ch_out)
+            $display("error");
+        
+        if(CONFIG.get_value("GPU_PIPELINE_ADDER")) begin
             adder.driver.seq_item_port.connect(adder_seq.seq_item_export);
-        else if(CONFIG.get_value("GPU_PIPELINE_MULT"))
+            adder.monitor.ch_out.connect(pipe_scoreboard.adder_export);
+        end
+        else if(CONFIG.get_value("GPU_PIPELINE_MULT")) begin
             mult.driver.seq_item_port.connect(mult_seq.seq_item_export);
-        else if(CONFIG.get_value("GPU_PIPELINE_DIVIDER"))
+            mult.monitor.ch_out.connect(pipe_scoreboard.mult_export);
+        end
+        else if(CONFIG.get_value("GPU_PIPELINE_DIVIDER")) begin
             divider.driver.seq_item_port.connect(divider_seq.seq_item_export);
-        else if(CONFIG.get_value("GPU_PIPELINE_DIVIDER"))
-            pipeline.driver.seq_item_port.connect(pipeline_seq.seq_item_export);
+            divider.monitor.ch_out.connect(pipe_scoreboard.divider_export);
+        end
     endfunction : connect_phase
 
 endclass : gpu_env

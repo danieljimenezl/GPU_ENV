@@ -71,8 +71,10 @@ package gpu_pkg;
     //  M E M O R Y  C O N T R O L E R
 
 
+
     ///////////////////////////////////////////////
     //  S O F T  L A Y E R
+    `include "pipeline_scoreboard.sv"
 
 
     `include "../gpu_env.sv"
