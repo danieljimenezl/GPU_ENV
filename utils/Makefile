@@ -7,8 +7,9 @@ UART ?= 0
 DRAM ?= 0
 SYSTEM ?= 0
 
-ifeq($(ADDER),1)
+ifeq ($(ADDER),1)
 	TEST=GPU_PIPLINE_ADDER
+endif
 
 #//////////////////////////////////////////////////////////
 #	E N V I R O N M E N T    F I L E S
