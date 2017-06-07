@@ -48,14 +48,14 @@ class uart_driver extends base_driver#(
             end
 
             ifc.rx_byte<=data_high;
-            @(posedge ifc.clk);
+            @(posedge ifc.base.clk);
                 ifc.rx_ready<=1;
-            @(posedge ifc.clk)
+            @(posedge ifc.base.clk)
                 ifc.rx_ready<=0;
             ifc.rx_byte<=data_low;
-            @(posedge ifc.clk);
+            @(posedge ifc.base.clk);
                 ifc.rx_ready<=1;
-            @(posedge ifc.clk)
+            @(posedge ifc.base.clk)
                 ifc.rx_ready<=0;
 
             seq_item_port.item_done();

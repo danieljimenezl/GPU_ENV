@@ -82,11 +82,9 @@ class pipeline_scoreboard extends base_scoreboard;
             if(tlm.tlm_type == ADD_INPUTS) begin
                 in0 = ((-1)**tlm.in0_sign)*(2**(tlm.in0_exponent - 15))*(1+tlm.in0_mantissa);
                 in1 = ((-1)**tlm.in1_sign)*(2**(tlm.in1_exponent - 15))*(1+tlm.in1_mantissa);
-                $display("In0: %f. In1: %f", in0, in1);
             end
             else begin
                 out = ((-1)**tlm.out_sign)*(2**(tlm.out_exponent - 15))*(1+tlm.out_mantissa);
-                $display("Out: %f.", out);
             end
         end
     endtask : adder_checker

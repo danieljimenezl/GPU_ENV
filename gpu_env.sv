@@ -63,9 +63,6 @@ class gpu_env extends uvm_env;
     //--------------------------------------------
     // connect phase
     function void connect_phase(uvm_phase phase);
-        if(!adder.monitor.ch_out)
-            $display("error");
-        
         if(CONFIG.get_value("GPU_PIPELINE_ADDER")) begin
             adder.driver.seq_item_port.connect(adder_seq.seq_item_export);
             adder.monitor.ch_out.connect(pipe_scoreboard.adder_export);

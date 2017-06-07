@@ -1,5 +1,5 @@
 
-ADDER ?= 1
+ADDER ?= 0
 MULT ?= 0
 DIVIDER ?= 0
 PIPELINE ?= 0
@@ -13,6 +13,7 @@ SYSTEM ?= 0
 
 
 GPU_SV = +incdir+../	\
+
 BASE_FILES = +incdir+../gpu_base/	\
 
 GRAP_PIPELINE = +incdir+../hard_layer/grap_pipeline/adder_agent/	\
@@ -32,10 +33,10 @@ GPU_INTERFACES =../gpu_base/base_ifc.sv										\
 #//////////////////////////////////////////////////////////
 
 
-RTL = 	../../rtl/graphic_pipeline/adder/*.v			\
-		../../rtl/graphic_pipeline/multiplier/*.v		\
-		../../rtl/graphic_pipeline/divider/*.v			\
-		../../rtl/graphic_pipeline/graphic_pipeline/*.v	\
+RTL =	+incdir+../../rtl/graphic_pipeline/adder/			\
+		+incdir+../../rtl/graphic_pipeline/multiplier/		\
+		+incdir+../../rtl/graphic_pipeline/divider/			\
+		+incdir+../../rtl/graphic_pipeline/graphic_pipeline/\
 
 
 #//////////////////////////////////////////////////////////

@@ -1,9 +1,14 @@
-`include "base_ifc.sv"
-`include "adder_ifc.sv"
-`include "mult_ifc.sv"
-`include "divider_ifc.sv"
-`include "pipeline_ifc.sv"
-`include "uart_ifc.sv"
+`ifdef GPU_PIPELINE_ADDER
+    `include "adder_half_precision.v"
+`endif
+
+`ifdef GPU_PIPELINE_MULT
+    `include "mult_half_precision.v"
+`endif
+
+`ifdef GPU_PIPELINE_DIVIDER
+    `include "div_half_precision.v"
+`endif
 
 module gpu_tb();
 
