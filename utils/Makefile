@@ -26,7 +26,11 @@ MEMORY_MANAGER = +incdir+../hard_layer/memory_manager/uart_agent/ \
 SOFT_LAYER = +incdir+../soft_layer/	\
 
 GPU_INTERFACES =../gpu_base/base_ifc.sv										\
-
+#				../hard_layer/grap_pipeline/adder_agent/adder_ifc.sv 		\
+#				../hard_layer/grap_pipeline/mult_agent/mult_ifc.sv			\
+#				../hard_layer/grap_pipeline/divider_agent/divider_ifc.sv	\
+#				../hard_layer/grap_pipeline/pipeline_agent/pipeline_ifc.sv	\
+#				../hard_layer/memory_manager/uart_agent/uart_ifc.sv			\
 
 #//////////////////////////////////////////////////////////
 #				V E R I L O G    F I L E S

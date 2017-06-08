@@ -1,7 +1,11 @@
 class pipeline_scoreboard extends base_scoreboard;
 
     gpu_config CONFIG; 
-    real in0 = 0, in1 = 0, out = 0;
+    real in0 = 0.0, in1 = 0.0, out = 0.0;
+    logic [9:0] mantissa0;
+    logic [9:0] mantissa1;
+
+ 
 
     uvm_analysis_export#(adder_tlm)     adder_export;
     uvm_analysis_export#(divider_tlm)   divider_export;
@@ -65,8 +69,6 @@ class pipeline_scoreboard extends base_scoreboard;
                 mult_checker();
             else if(CONFIG.get_value("GPU_PIPELINE_DIVIDER"))
                 divider_checker();
-
-            result_checker(in0, in1, out);
         join
     endtask : run_phase
 
@@ -75,16 +77,39 @@ class pipeline_scoreboard extends base_scoreboard;
     // adder checker
     task adder_checker();
         adder_tlm tlm;
-
         tlm = new();
+
         forever begin
             adder_fifo.get(tlm);
+
             if(tlm.tlm_type == ADD_INPUTS) begin
-                in0 = ((-1)**tlm.in0_sign)*(2**(tlm.in0_exponent - 15))*(1+tlm.in0_mantissa);
-                in1 = ((-1)**tlm.in1_sign)*(2**(tlm.in1_exponent - 15))*(1+tlm.in1_mantissa);
+                mantissa0 = tlm.in0_mantissa;
+                mantissa1 = tlm.in1_mantissa;
+
+                in0 = 1.0;
+                in1 = 1.0;
+
+                for(int i=0;i<10;i++) begin
+                    if(mantissa0[i])
+                        in0 = in0 + 2.0**(-(10-i));
+                    if(mantissa1[i])
+                        in1 = in1 + 2.0**(-(10-i));
+                end
+
+                in0 = in0*((-1.0)**tlm.in0_sign)*(2.0**(tlm.in0_exponent - 15));
+                in1 = in1*((-1.0)**tlm.in1_sign)*(2.0**(tlm.in1_exponent - 15));
             end
-            else begin
-                out = ((-1)**tlm.out_sign)*(2**(tlm.out_exponent - 15))*(1+tlm.out_mantissa);
+            else if(tlm.tlm_type == ADD_RESULT) begin
+                mantissa0 = tlm.out_mantissa;
+                out = 1.0;
+
+                for(int i=0;i<10;i++)
+                    if(mantissa0[i]) begin
+                        out = out + 2.0**(-(10-i));
+                    end
+
+                out = out*((-1.0)**tlm.out_sign)*(2.0**(tlm.out_exponent - 15));
+                result_checker(in0, in1, out);
             end
         end
     endtask : adder_checker
@@ -94,16 +119,39 @@ class pipeline_scoreboard extends base_scoreboard;
     // mult checker
     task mult_checker();
         mult_tlm tlm;
-
         tlm = new();
+
         forever begin
             mult_fifo.get(tlm);
             if(tlm.tlm_type == MULT_INPUTS) begin
-                in0 = ((-1)**tlm.in0_sign)*(2**(tlm.in0_exponent - 15))*(1+tlm.in0_mantissa);
-                in1 = ((-1)**tlm.in1_sign)*(2**(tlm.in1_exponent - 15))*(1+tlm.in1_mantissa);
+                mantissa0 = tlm.in0_mantissa;
+                mantissa1 = tlm.in1_mantissa;
+
+                in0 = 1.0;
+                in1 = 1.0;
+
+                for(int i=0;i<10;i++) begin
+                    if(mantissa0[i])
+                        in0 = in0 + 2.0**(-(10-i));
+                    if(mantissa1[i])
+                        in1 = in1 + 2.0**(-(10-i));
+                end
+
+                in0 = in0*((-1.0)**tlm.in0_sign)*(2.0**(tlm.in0_exponent - 15));
+                in1 = in1*((-1.0)**tlm.in1_sign)*(2.0**(tlm.in1_exponent - 15));
             end
-            else 
-                out = ((-1)**tlm.out_sign)*(2**(tlm.out_exponent - 15))*(1+tlm.out_mantissa);
+            else if(tlm.tlm_type == MULT_RESULT) begin
+                mantissa0 = tlm.out_mantissa;
+                out = 1.0;
+
+                for(int i=0;i<10;i++)
+                    if(mantissa0[i]) begin
+                        out = out + 2.0**(-(10-i));
+                    end
+
+                out = out*((-1.0)**tlm.out_sign)*(2.0**(tlm.out_exponent - 15));
+                result_checker(in0, in1, out);
+            end
         end
     endtask : mult_checker
 
@@ -117,11 +165,34 @@ class pipeline_scoreboard extends base_scoreboard;
         forever begin
             divider_fifo.get(tlm);
             if(tlm.tlm_type == DIV_INPUTS) begin
-                in0 = ((-1)**tlm.in0_sign)*(2**(tlm.in0_exponent - 15))*(1+tlm.in0_mantissa);
-                in1 = ((-1)**tlm.in1_sign)*(2**(tlm.in1_exponent - 15))*(1+tlm.in1_mantissa);
+                mantissa0 = tlm.in0_mantissa;
+                mantissa1 = tlm.in1_mantissa;
+
+                in0 = 1.0;
+                in1 = 1.0;
+
+                for(int i=0;i<10;i++) begin
+                    if(mantissa0[i])
+                        in0 = in0 + 2.0**(-(10-i));
+                    if(mantissa1[i])
+                        in1 = in1 + 2.0**(-(10-i));
+                end
+
+                in0 = in0*((-1.0)**tlm.in0_sign)*(2.0**(tlm.in0_exponent - 15));
+                in1 = in1*((-1.0)**tlm.in1_sign)*(2.0**(tlm.in1_exponent - 15));
             end
-            else 
-                out = ((-1)**tlm.out_sign)*(2**(tlm.out_exponent - 15))*(1+tlm.out_mantissa);
+            else if(tlm.tlm_type == DIV_RESULT) begin
+                mantissa0 = tlm.out_mantissa;
+                out = 1.0;
+                
+                for(int i=0;i<10;i++)
+                    if(mantissa0[i]) begin
+                        out = out + 2.0**(-(10-i));
+                    end
+
+                out = out*((-1.0)**tlm.out_sign)*(2.0**(tlm.out_exponent - 15));
+                result_checker(in0, in1, out);
+            end
         end
     endtask : divider_checker
 
@@ -130,25 +201,32 @@ class pipeline_scoreboard extends base_scoreboard;
     // result checker
     task result_checker(real in0, real in1, real out);
         real temp = 0;
+        real uRange = 0;
+        real dRange = 0;
 
-        forever begin
-            @(out)
-            if(CONFIG.get_value("GPU_PIPELINE_ADDER")) begin
-                temp = in0 + in1;
-                $display("TIME = %f. ADDER OUT VALUE: %f. EXPECTED VALUE: %f.", $time, out, temp);
-                if(out != temp)
-                    `uvm_error("ADDER_MODULE.",$psprintf(" ADDER OUT VALUE: %f. EXPECTED VALUE: %f.", out, temp));
+        if(CONFIG.get_value("GPU_PIPELINE_ADDER")) begin
+            temp = in0 + in1;
+            uRange = temp + (temp*0.01);
+            dRange = temp - (temp*0.01);
+
+            if(!(out < uRange) && out > dRange)
+               `uvm_error("ADDER_MODULE",$psprintf(" ADDER OUT VALUE: %f. EXPECTED VALUE: %f.", out, temp));
+        end
+        else if(CONFIG.get_value("GPU_PIPELINE_MULT")) begin
+            temp = in0 * in1;
+            uRange = temp + (temp*0.01);
+            dRange = temp - (temp*0.01);
+
+            if(!(out < uRange) && out > dRange)
+                `uvm_error("MULT_MODULE",$psprintf(" MULT OUT VALUE: %f. EXPECTED VALUE: %f.", out, temp));
             end
-            else if(CONFIG.get_value("GPU_PIPELINE_MULT")) begin
-                temp = in0 * in1;
-                if(out != temp)
-                    `uvm_error("MULT_MODULE.",$psprintf(" MULT OUT VALUE: %f. EXPECTED VALUE: %f.", out, temp));
-            end
-            else if(CONFIG.get_value("GPU_PIPELINE_DIVIDER")) begin
-                temp = in0/in1;
-                if(out != temp)
-                `uvm_error("DIVIDER_MODULE.",$psprintf(" DIVIDER OUT VALUE: %f. EXPECTED VALUE: %f.", out, temp));
-            end
+        else if(CONFIG.get_value("GPU_PIPELINE_DIVIDER")) begin
+            temp = in0/in1;
+            uRange = temp + (temp*0.01);
+            dRange = temp - (temp*0.01);
+
+            if(!(out < uRange) && out > dRange)
+                `uvm_error("DIVIDER_MODULE",$psprintf(" DIVIDER OUT VALUE: %f. EXPECTED VALUE: %f.", out, temp));
         end
     endtask : result_checker
 

@@ -39,13 +39,13 @@ class mult_monitor extends base_monitor#(
                 tlm = new();
                 tlm.tlm_type = MULT_INPUTS;
 
-                tlm.in0_sign = ifc.in0_mult[0];
-                tlm.in0_exponent = ifc.in0_mult[5:1];
-                tlm.in0_mantissa = ifc.in0_mult[15:6];
+                tlm.in0_sign = ifc.in0_mult[15];
+                tlm.in0_exponent = ifc.in0_mult[14:10];
+                tlm.in0_mantissa = ifc.in0_mult[9:0];
 
-                tlm.in1_sign = ifc.in0_mult[0];
-                tlm.in1_exponent = ifc.in0_mult[5:1];
-                tlm.in1_mantissa = ifc.in0_mult[15:6];
+                tlm.in1_sign = ifc.in1_mult[15];
+                tlm.in1_exponent = ifc.in1_mult[14:10];
+                tlm.in1_mantissa = ifc.in1_mult[9:0];
 
                 ch_out.write(tlm);
         end
@@ -56,13 +56,13 @@ class mult_monitor extends base_monitor#(
     // output value
     task output_value();
         forever begin
-            @(ifc.out_mult);
+            @(posedge ifc.base.clk);
                 tlm = new();
                 tlm.tlm_type = MULT_RESULT;
 
-                tlm.out_sign = ifc.out_mult[0];
-                tlm.out_exponent = ifc.out_mult[5:1];
-                tlm.out_mantissa = ifc.out_mult[15:6];
+                tlm.out_sign = ifc.out_mult[15];
+                tlm.out_exponent = ifc.out_mult[14:10];
+                tlm.out_mantissa = ifc.out_mult[9:0];
 
                 ch_out.write(tlm);
         end

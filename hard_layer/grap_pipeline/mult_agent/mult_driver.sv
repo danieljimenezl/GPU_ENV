@@ -40,13 +40,14 @@ class mult_driver extends base_driver#(
             mult_tlm tlm = new();
             seq_item_port.get_next_item(tlm);
 
-            ifc.in0_mult[0] <= tlm.in0_sign;
-            ifc.in0_mult[5:1] <= tlm.in0_exponent;
-            ifc.in0_mult[15:6] <= tlm.in0_mantissa;
+            @(posedge ifc.base.clk)
+                ifc.in0_mult[15] <= tlm.in0_sign;
+                ifc.in0_mult[14:10] <= tlm.in0_exponent;
+                ifc.in0_mult[9:0] <= tlm.in0_mantissa;
 
-            ifc.in1_mult[0] <= tlm.in1_sign;
-            ifc.in1_mult[5:1] <= tlm.in1_exponent;
-            ifc.in1_mult[15:6] <= tlm.in1_mantissa;
+                ifc.in1_mult[15] <= tlm.in1_sign;
+                ifc.in1_mult[14:10] <= tlm.in1_exponent;
+                ifc.in1_mult[9:0] <= tlm.in1_mantissa;
 
             seq_item_port.item_done();
         end

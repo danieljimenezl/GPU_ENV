@@ -21,7 +21,6 @@ class adder_sequence extends uvm_sequence #(adder_tlm);
             start_item(tlm);
             assert(tlm.randomize());
             finish_item(tlm);
-            #10;
         end
     endtask : body
 

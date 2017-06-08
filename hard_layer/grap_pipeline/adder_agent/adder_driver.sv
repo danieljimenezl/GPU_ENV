@@ -35,18 +35,19 @@ class adder_driver extends base_driver#(
     task input_values();
         ifc.in0_adder <= 16'd0;
         ifc.in1_adder <= 16'd0;
-
+        
         forever begin
             adder_tlm tlm = new();
             seq_item_port.get_next_item(tlm);
 
-            ifc.in0_adder[0] <= tlm.in0_sign;
-            ifc.in0_adder[5:1] <= tlm.in0_exponent;
-            ifc.in0_adder[15:6] <= tlm.in0_mantissa;
+            @(posedge ifc.base.clk)
+                ifc.in0_adder[15] <= tlm.in0_sign;
+                ifc.in0_adder[14:10] <= tlm.in0_exponent;
+                ifc.in0_adder[9:0] <= tlm.in0_mantissa;
 
-            ifc.in1_adder[0] <= tlm.in1_sign;
-            ifc.in1_adder[5:1] <= tlm.in1_exponent;
-            ifc.in1_adder[15:6] <= tlm.in1_mantissa;
+                ifc.in1_adder[15] <= tlm.in1_sign;
+                ifc.in1_adder[14:10] <= tlm.in1_exponent;
+                ifc.in1_adder[9:0] <= tlm.in1_mantissa;
 
             seq_item_port.item_done();
         end
