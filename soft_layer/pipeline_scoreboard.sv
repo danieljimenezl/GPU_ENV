@@ -1,11 +1,12 @@
 class pipeline_scoreboard extends base_scoreboard;
 
-    gpu_config CONFIG; 
-    real in0 = 0.0, in1 = 0.0, out = 0.0;
+    gpu_config CONFIG;
+    real in0 = 0.0, in1 = 0.0, out = 0.0, expectedValue = 0.0, uRange = 0.0, dRange = 0.0, precision = 0.0;
+    bit underFlow = 0, overFlow = 0;
     logic [9:0] mantissa0;
     logic [9:0] mantissa1;
 
- 
+
 
     uvm_analysis_export#(adder_tlm)     adder_export;
     uvm_analysis_export#(divider_tlm)   divider_export;
@@ -44,6 +45,9 @@ class pipeline_scoreboard extends base_scoreboard;
             divider_fifo = new ("divider_fifo",this);
             divider_export = new("divider_export",this);
         end
+
+        precision = CONFIG.get_real_value("GPU_PIPELINE_PRECISION");
+        $display("PRECISION: %0f",precision);
     endfunction : build_phase
 
 
@@ -98,8 +102,19 @@ class pipeline_scoreboard extends base_scoreboard;
 
                 in0 = in0*((-1.0)**tlm.in0_sign)*(2.0**(tlm.in0_exponent - 15));
                 in1 = in1*((-1.0)**tlm.in1_sign)*(2.0**(tlm.in1_exponent - 15));
+
+                expectedValue = in0+in1;
             end
             else if(tlm.tlm_type == ADD_RESULT) begin
+                if(tlm.out_mantissa == 0 && tlm.out_exponent == 0) begin
+                    if(((expectedValue < 65535*0.00001) && (expectedValue > -65535*0.00001)) || expectedValue == 0)
+                        underFlow = 1;
+                end
+                else if((tlm.out_mantissa == 10'h3ff || tlm.out_mantissa == 10'h0ff ) && tlm.out_exponent == 5'h1f) begin
+                    if(expectedValue < 16'h7fff || expectedValue > -16'h7fff)
+                        overFlow = 1;
+                end
+
                 mantissa0 = tlm.out_mantissa;
                 out = 1.0;
 
@@ -109,7 +124,20 @@ class pipeline_scoreboard extends base_scoreboard;
                     end
 
                 out = out*((-1.0)**tlm.out_sign)*(2.0**(tlm.out_exponent - 15));
-                result_checker(in0, in1, out);
+
+                uRange = expectedValue + (expectedValue*precision);
+                dRange = expectedValue - (expectedValue*precision);
+
+                if(underFlow) begin
+                    `uvm_warning("ADDER_MODULE",$psprintf("UNDERFLOW: Adder out value: %f. Expected value: %f.", out, expectedValue));
+                    underFlow = 0;
+                end
+                else if(overFlow) begin
+                    `uvm_warning("ADDER_MODULE",$psprintf("OVERFLOW: Adder out value: %f. Expected value: %f.", out, expectedValue));
+                    overFlow = 0;
+                end
+                else if(!(out < uRange) && out > dRange)
+                    `uvm_error("ADDER_MODULE",$psprintf(" ADDER OUT VALUE: %f. EXPECTED VALUE: %f.", out, expectedValue));
             end
         end
     endtask : adder_checker
@@ -139,8 +167,19 @@ class pipeline_scoreboard extends base_scoreboard;
 
                 in0 = in0*((-1.0)**tlm.in0_sign)*(2.0**(tlm.in0_exponent - 15));
                 in1 = in1*((-1.0)**tlm.in1_sign)*(2.0**(tlm.in1_exponent - 15));
+
+                expectedValue = in0*in1;
             end
             else if(tlm.tlm_type == MULT_RESULT) begin
+                if(tlm.out_mantissa == 0 && tlm.out_exponent == 0) begin
+                    if(((expectedValue < 65535*0.00001) && (expectedValue > -65535*0.00001)) || expectedValue == 0)
+                        underFlow = 1;
+                end
+                else if((tlm.out_mantissa == 10'h3ff || tlm.out_mantissa == 10'h0ff ) && tlm.out_exponent == 5'h1f) begin
+                    if(expectedValue < 16'h7fff || expectedValue > -16'h7fff)
+                        overFlow = 1;
+                end
+
                 mantissa0 = tlm.out_mantissa;
                 out = 1.0;
 
@@ -150,7 +189,20 @@ class pipeline_scoreboard extends base_scoreboard;
                     end
 
                 out = out*((-1.0)**tlm.out_sign)*(2.0**(tlm.out_exponent - 15));
-                result_checker(in0, in1, out);
+
+                uRange = expectedValue + (expectedValue*precision);
+                dRange = expectedValue - (expectedValue*precision);
+
+                if(underFlow) begin
+                    `uvm_warning("MULT_MODULE",$psprintf("UNDERFLOW: Mult out value: %f. Expected value: %f.", out, expectedValue));
+                    underFlow = 0;
+                end
+                else if(overFlow) begin
+                    `uvm_warning("MULT_MODULE",$psprintf("OVERFLOW: Mult out value: %f. Expected value: %f.", out, expectedValue));
+                    overFlow = 0;
+                end
+                else if(!(out < uRange) && out > dRange)
+                    `uvm_error("MULT_MODULE",$psprintf(" MULT OUT VALUE: %f. EXPECTED VALUE: %f.", out, expectedValue));
             end
         end
     endtask : mult_checker
@@ -160,8 +212,8 @@ class pipeline_scoreboard extends base_scoreboard;
     // divider checker
     task divider_checker();
         divider_tlm tlm;
-
         tlm = new();
+
         forever begin
             divider_fifo.get(tlm);
             if(tlm.tlm_type == DIV_INPUTS) begin
@@ -180,54 +232,44 @@ class pipeline_scoreboard extends base_scoreboard;
 
                 in0 = in0*((-1.0)**tlm.in0_sign)*(2.0**(tlm.in0_exponent - 15));
                 in1 = in1*((-1.0)**tlm.in1_sign)*(2.0**(tlm.in1_exponent - 15));
+
+                expectedValue = in0/in1;
             end
             else if(tlm.tlm_type == DIV_RESULT) begin
+                if(tlm.out_mantissa == 0 && tlm.out_exponent == 0) begin
+                    if(((expectedValue < 65535*0.00001) && (expectedValue > -65535*0.00001)) || expectedValue == 0)
+                        underFlow = 1;
+                end
+                else if((tlm.out_mantissa == 10'h3ff || tlm.out_mantissa == 10'h0ff ) && tlm.out_exponent == 5'h1f) begin
+                    if(expectedValue > 16'h7fff || expectedValue < -16'h7fff)
+                        overFlow = 1;
+                end
+
                 mantissa0 = tlm.out_mantissa;
                 out = 1.0;
-                
+
                 for(int i=0;i<10;i++)
                     if(mantissa0[i]) begin
                         out = out + 2.0**(-(10-i));
                     end
 
                 out = out*((-1.0)**tlm.out_sign)*(2.0**(tlm.out_exponent - 15));
-                result_checker(in0, in1, out);
+
+                uRange = expectedValue + (expectedValue*precision);
+                dRange = expectedValue - (expectedValue*precision);
+
+                if(underFlow) begin
+                    `uvm_warning("DIVIDER_MODULE",$psprintf("UNDERFLOW: Divider out value: %f. Expected value: %f.", out, expectedValue));
+                    underFlow = 0;
+                end
+                else if(overFlow) begin
+                    `uvm_warning("DIVIDER_MODULE",$psprintf("OVERFLOW: Divider out value: %f. Expected value: %f.", out, expectedValue));
+                    overFlow = 0;
+                end
+                else if(!(out < uRange) && out > dRange)
+                    `uvm_error("DIVIDER_MODULE",$psprintf(" DIVIDER OUT VALUE: %f. EXPECTED VALUE: %f.", out, expectedValue));
             end
         end
     endtask : divider_checker
-
-
-    //--------------------------------------------
-    // result checker
-    task result_checker(real in0, real in1, real out);
-        real temp = 0;
-        real uRange = 0;
-        real dRange = 0;
-
-        if(CONFIG.get_value("GPU_PIPELINE_ADDER")) begin
-            temp = in0 + in1;
-            uRange = temp + (temp*0.01);
-            dRange = temp - (temp*0.01);
-
-            if(!(out < uRange) && out > dRange)
-               `uvm_error("ADDER_MODULE",$psprintf(" ADDER OUT VALUE: %f. EXPECTED VALUE: %f.", out, temp));
-        end
-        else if(CONFIG.get_value("GPU_PIPELINE_MULT")) begin
-            temp = in0 * in1;
-            uRange = temp + (temp*0.01);
-            dRange = temp - (temp*0.01);
-
-            if(!(out < uRange) && out > dRange)
-                `uvm_error("MULT_MODULE",$psprintf(" MULT OUT VALUE: %f. EXPECTED VALUE: %f.", out, temp));
-            end
-        else if(CONFIG.get_value("GPU_PIPELINE_DIVIDER")) begin
-            temp = in0/in1;
-            uRange = temp + (temp*0.01);
-            dRange = temp - (temp*0.01);
-
-            if(!(out < uRange) && out > dRange)
-                `uvm_error("DIVIDER_MODULE",$psprintf(" DIVIDER OUT VALUE: %f. EXPECTED VALUE: %f.", out, temp));
-        end
-    endtask : result_checker
 
 endclass : pipeline_scoreboard
