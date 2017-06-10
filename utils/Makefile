@@ -1,5 +1,5 @@
 
-ADDER ?= 0
+ADDER ?= 1
 MULT ?= 0
 DIVIDER ?= 0
 PIPELINE ?= 0
@@ -26,11 +26,11 @@ MEMORY_MANAGER = +incdir+../hard_layer/memory_manager/uart_agent/ \
 SOFT_LAYER = +incdir+../soft_layer/	\
 
 GPU_INTERFACES =../gpu_base/base_ifc.sv										\
-#				../hard_layer/grap_pipeline/adder_agent/adder_ifc.sv 		\
-#				../hard_layer/grap_pipeline/mult_agent/mult_ifc.sv			\
-#				../hard_layer/grap_pipeline/divider_agent/divider_ifc.sv	\
+				../hard_layer/grap_pipeline/adder_agent/adder_ifc.sv 		\
+				../hard_layer/grap_pipeline/mult_agent/mult_ifc.sv			\
+				../hard_layer/grap_pipeline/divider_agent/divider_ifc.sv	\
 #				../hard_layer/grap_pipeline/pipeline_agent/pipeline_ifc.sv	\
-#				../hard_layer/memory_manager/uart_agent/uart_ifc.sv			\
+				../hard_layer/memory_manager/uart_agent/uart_ifc.sv			\
 
 #//////////////////////////////////////////////////////////
 #				V E R I L O G    F I L E S
@@ -41,7 +41,7 @@ RTL =	+incdir+../../rtl/graphic_pipeline/adder/			\
 		+incdir+../../rtl/graphic_pipeline/multiplier/		\
 		+incdir+../../rtl/graphic_pipeline/divider/			\
 		+incdir+../../rtl/graphic_pipeline/graphic_pipeline/\
-
+		+incdir+../../rtl/memory_manager/					\
 
 #//////////////////////////////////////////////////////////
 #					T E S T S
@@ -50,27 +50,22 @@ RTL =	+incdir+../../rtl/graphic_pipeline/adder/			\
 
 ifeq ($(ADDER),1)
 	TEST = 'GPU_PIPELINE_ADDER'
-	GPU_INTERFACES += '../hard_layer/grap_pipeline/adder_agent/adder_ifc.sv'
 endif
 
 ifeq ($(MULT),1)
 	TEST = 'GPU_PIPELINE_MULT'
-	GPU_INTERFACES += '../hard_layer/grap_pipeline/mult_agent/mult_ifc.sv'
 endif
 
 ifeq ($(DIVIDER),1)
 	TEST = 'GPU_PIPELINE_DIVIDER'
-	GPU_INTERFACES += '../hard_layer/grap_pipeline/divider_agent/divider_ifc.sv'
 endif
 
 ifeq ($(PIPELINE),1)
 	TEST = 'GPU_PIPELINE'
-	GPU_INTERFACES += '../hard_layer/grap_pipeline/pipeline_agent/pipeline_ifc.sv'
 endif
 
 ifeq ($(UART),1)
 	TEST = 'GPU_MEMORY_UART'
-	GPU_INTERFACES += '../hard_layer/memory_manager/uart_agent/uart_ifc.sv'
 endif
 
 
