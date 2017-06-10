@@ -48,7 +48,7 @@ package gpu_pkg;
 
     //  P I P E L I N E
     `include "pipeline_seq.sv"
-    //`include "pipeline_seq_lib.sv"
+    `include "pipeline_seq_lib.sv"
     `include "pipeline_sequencer.sv"
     `include "pipeline_driver.sv"
     `include "pipeline_monitor.sv"

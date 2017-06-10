@@ -8,6 +8,7 @@ class gpu_test extends uvm_test;
     adder_sequence adder_seq;
     mult_sequence mult_seq;
     divider_sequence divider_seq;
+    pipeline_sequence pipeline_seq;
 
     `uvm_component_utils_begin(gpu_test)
     `uvm_component_utils_end
@@ -34,6 +35,8 @@ class gpu_test extends uvm_test;
             mult_test();
         else if(CONFIG.get_value("GPU_PIPELINE_DIVIDER"))
             divider_test();
+        else if(CONFIG.get_value("GPU_PIPELINE"))
+            pipeline_test();
 
         phase.drop_objection(.obj(this));
     endtask : run_phase
@@ -70,5 +73,15 @@ class gpu_test extends uvm_test;
             divider_seq.start(env.divider_seq);
         join
     endtask : divider_test
+
+    //--------------------------------------------
+    // Pipeline test
+    task pipeline_test();
+        pipeline_seq = pipeline_sequence::type_id::create(.name("pipeline_seq"), .contxt(get_full_name()));
+        assert(pipeline_seq.randomize());
+        fork
+            pipeline_seq.start(env.pipeline_seq);
+        join
+    endtask : pipeline_test
 
 endclass : gpu_test

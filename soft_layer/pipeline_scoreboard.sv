@@ -1,20 +1,20 @@
 class pipeline_scoreboard extends base_scoreboard;
 
     gpu_config CONFIG;
-    real in0 = 0.0, in1 = 0.0, out = 0.0, expectedValue = 0.0, uRange = 0.0, dRange = 0.0, precision = 0.0;
+    real in0 = 0.0, in1 = 0.0, out = 0.0, expectedValue = 0.0, uRange = 0.0, dRange = 0.0, precision = 0.005;
     bit underFlow = 0, overFlow = 0;
     logic [9:0] mantissa0;
     logic [9:0] mantissa1;
 
-
-
     uvm_analysis_export#(adder_tlm)     adder_export;
     uvm_analysis_export#(divider_tlm)   divider_export;
     uvm_analysis_export#(mult_tlm)      mult_export;
+    uvm_analysis_export#(pipeline_tlm)  pipeline_export;
 
-    uvm_tlm_analysis_fifo#(adder_tlm)   adder_fifo;
-    uvm_tlm_analysis_fifo#(mult_tlm)    mult_fifo;
-    uvm_tlm_analysis_fifo#(divider_tlm) divider_fifo;
+    uvm_tlm_analysis_fifo#(adder_tlm)       adder_fifo;
+    uvm_tlm_analysis_fifo#(mult_tlm)        mult_fifo;
+    uvm_tlm_analysis_fifo#(divider_tlm)     divider_fifo;
+    uvm_tlm_analysis_fifo#(pipeline_tlm)    pipeline_fifo;
 
     `uvm_component_utils_begin(pipeline_scoreboard)
     `uvm_component_utils_end
@@ -45,9 +45,12 @@ class pipeline_scoreboard extends base_scoreboard;
             divider_fifo = new ("divider_fifo",this);
             divider_export = new("divider_export",this);
         end
+        else if(CONFIG.get_value("GPU_PIPELINE")) begin
+            pipeline_fifo = new("pipeline_fifo",this);
+            pipeline_export = new("pipeline_export",this);
+        end
 
-        precision = CONFIG.get_real_value("GPU_PIPELINE_PRECISION");
-        $display("PRECISION: %0f",precision);
+        //precision = CONFIG.get_real_value("GPU_PIPELINE_PRECISION");
     endfunction : build_phase
 
 
@@ -60,6 +63,8 @@ class pipeline_scoreboard extends base_scoreboard;
             mult_export.connect(mult_fifo.analysis_export); 
         else if(CONFIG.get_value("GPU_PIPELINE_DIVIDER"))
             divider_export.connect(divider_fifo.analysis_export);
+        else if(CONFIG.get_value("GPU_PIPELINE"))
+            pipeline_export.connect(pipeline_fifo.analysis_export);
     endfunction : connect_phase
 
 

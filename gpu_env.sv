@@ -75,6 +75,10 @@ class gpu_env extends uvm_env;
             divider.driver.seq_item_port.connect(divider_seq.seq_item_export);
             divider.monitor.ch_out.connect(pipe_scoreboard.divider_export);
         end
+        else if(CONFIG.get_value("GPU_PIPELINE")) begin
+            pipeline.driver.seq_item_port.connect(pipeline_seq.seq_item_export);
+            pipeline.monitor.ch_out.connect(pipe_scoreboard.pipeline_export);
+        end
     endfunction : connect_phase
 
 endclass : gpu_env
