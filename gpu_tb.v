@@ -53,6 +53,7 @@ module gpu_tb();
     adder_ifc adder_ifc();
     mult_ifc mult_ifc();
     divider_ifc divider_ifc();
+    pipeline_ifc pipeline_ifc();
     uart_ifc uart_ifc();
 
 
