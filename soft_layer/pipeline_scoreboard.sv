@@ -1,7 +1,7 @@
 class pipeline_scoreboard extends base_scoreboard;
 
     gpu_config CONFIG;
-    real in0 = 0.0, in1 = 0.0, out = 0.0, expectedValue = 0.0, uRange = 0.0, dRange = 0.0, precision = 0.005;
+    real in0 = 0.0, in1 = 0.0, out = 0.0, expectedValue = 0.0, uRange = 0.0, dRange = 0.0, precision = 0.0;
     bit underFlow = 0, overFlow = 0;
     logic [9:0] mantissa0;
     logic [9:0] mantissa1;
@@ -50,7 +50,7 @@ class pipeline_scoreboard extends base_scoreboard;
             pipeline_export = new("pipeline_export",this);
         end
 
-        //precision = CONFIG.get_real_value("GPU_PIPELINE_PRECISION");
+        precision = CONFIG.get_real_value("GPU_PIPELINE_PRECISION");
     endfunction : build_phase
 
 
@@ -78,6 +78,8 @@ class pipeline_scoreboard extends base_scoreboard;
                 mult_checker();
             else if(CONFIG.get_value("GPU_PIPELINE_DIVIDER"))
                 divider_checker();
+            else if(CONFIG.get_value("GPU_PIPELINE"))
+                pipeline_checker();
         join
     endtask : run_phase
 
@@ -276,5 +278,102 @@ class pipeline_scoreboard extends base_scoreboard;
             end
         end
     endtask : divider_checker
+
+
+    //--------------------------------------------
+    // divider checker
+    task pipeline_checker();
+        real camVer[string], camDc, cosValues[string], senValues[string], scale[string], trans[string], vertex[string];
+        real X_p = 0.0, Y_p = 0.0, Z_p = 0.0, X_c = 0.0, Y_c = 0.0, Z_c = 0.0, X_expected = 0.0, Y_expected = 0.0;
+        real outX = 0.0, outY = 0.0;
+        real uRangeX = 0.0, uRangeY = 0.0, dRangeX = 0.0, dRangeY = 0.0;
+        pipeline_tlm tlm;
+        tlm = new();
+
+        forever begin
+            pipeline_fifo.get(tlm);
+            if(tlm.tlm_type == PIPELINE_INPUTS) begin
+                foreach( tlm.camVer[i] )
+                    camVer[i] = numToReal(tlm.camVer[i]["sign"], tlm.camVer[i]["mantissa"], tlm.camVer[i]["exponent"]);
+                camDc = numToReal(tlm.cam["DC"]["sign"], tlm.cam["Dc"]["mantissa"], tlm.cam["Dc"]["exponent"]);
+                foreach( tlm.cosValues[i] )
+                    cosValues[i] = numToReal(tlm.cosValues[i]["sign"], tlm.cosValues[i]["mantissa"], tlm.cosValues[i]["exponent"]);
+                foreach( tlm.senValues[i] )
+                    senValues[i] = numToReal(tlm.senValues[i]["sign"], tlm.senValues[i]["mantissa"], tlm.senValues[i]["exponent"]);
+                foreach( tlm.scale[i] )
+                    scale[i] = numToReal(tlm.scale[i]["sign"], tlm.scale[i]["mantissa"], tlm.scale[i]["exponent"]);
+                foreach( tlm.trans[i] )
+                    trans[i] = numToReal(tlm.trans[i]["sign"], tlm.trans[i]["mantissa"], tlm.trans[i]["exponent"]);
+                foreach( tlm.vertex[i] )
+                    vertex[i] = numToReal(tlm.vertex[i]["sign"], tlm.vertex[i]["mantissa"], tlm.vertex[i]["exponent"]);
+
+                X_p = (vertex["x"]*scale["x"]*(cosValues["Yaw"]*cosValues["Roll"] + senValues["Yaw"]*senValues["Pitch"]*senValues["Roll"])) + (vertex["y"]*scale["y"]*(senValues["Yaw"]*senValues["Pitch"]*cosValues["Roll"] - cosValues["Yaw"]*senValues["Roll"])) + (vertex["z"]*scale["z"]*(senValues["Yaw"]*cosValues["Pitch"])) + trans["x"];
+
+                Y_p = (vertex["x"]*scale["x"]*(cosValues["Pitch"]*senValues["Roll"])) + (vertex["y"]*scale["y"]*(cosValues["Pitch"]*cosValues["Roll"])) - (vertex["z"]*scale["z"]*(senValues["Pitch"])) + trans["y"];
+
+                Z_p = (vertex["x"]*scale["x"]*(cosValues["Yaw"]*senValues["Pitch"]*senValues["Roll"] - senValues["Yaw"]*cosValues["Roll"])) + (vertex["y"]*scale["y"]*(senValues["Yaw"]*senValues["Roll"] + cosValues["Yaw"]*senValues["Pitch"]*cosValues["Roll"])) + (vertex["z"]*scale["z"]*(cosValues["Yaw"]*cosValues["Pitch"])) + trans["z"];
+
+                X_c = X_p - camVer["x"];
+                Y_c = Y_p - camVer["y"];
+                Z_c = Z_p - camVer["z"];
+
+                X_expected = (-X_c * camDc)/Z_c;
+                Y_expected = (Y_c * camDc)/Z_c;
+            end
+            else if(tlm.tlm_type == PIPELINE_RESULT) begin
+                outX = numToReal(tlm.outX_sign, tlm.outX_mantissa, tlm.outX_exponent);
+                outY = numToReal(tlm.outY_sign, tlm.outY_mantissa, tlm.outY_exponent);
+ 
+                uRangeX = X_expected + (X_expected*precision);
+                dRangeX = X_expected - (X_expected*precision);
+
+                uRangeY = Y_expected + (Y_expected*precision);
+                dRangeY = Y_expected - (Y_expected*precision);
+
+                if(!(outX < uRangeX) && outX > dRangeX)
+                    `uvm_error("PIPELINE_MODULE",$psprintf(" DIVIDER OUT_X VALUE: %f. EXPECTED X VALUE: %f.", outX, X_expected));
+                if(!(outY < uRangeY) && outY > dRangeY)
+                    `uvm_error("PIPELINE_MODULE",$psprintf(" DIVIDER OUT_Y VALUE: %f. EXPECTED Y VALUE: %f.", outY, Y_expected));
+            end
+        end
+    endtask : pipeline_checker
+
+
+    //--------------------------------------------
+    // Convert num to real
+    function real numToReal(int sign, int mantissa, int exponent);
+        real result = 0.0;
+        mantissa0 = mantissa;
+
+        for(int i=0;i<10;i++)
+            if(mantissa0[i]) begin
+                result = result + 2.0**(-(10-i));
+            end
+
+        result = result*((-1.0)**sign)*(2.0**(exponent - 15));
+        return result;
+    endfunction : numToReal
+
+
+    //--------------------------------------------
+    // Check underflow
+    function bit underflow(int sign, int mantissa, int exponent, real expectedValue);
+        if(mantissa == 0 && exponent == 0) begin
+            if(((expectedValue < 65535*0.00001) && (expectedValue > -65535*0.00001)) || expectedValue == 0)
+                return 1;
+        end
+        return 0;
+    endfunction : underflow
+
+
+    //--------------------------------------------
+    // Check overflow 
+    function bit overflow(int sign, int mantissa, int exponent, real expectedValue);
+        if((mantissa == 10'h3ff || mantissa == 10'h0ff ) && exponent == 5'h1f) begin
+            if(expectedValue > 16'h7fff || expectedValue < -16'h7fff)
+                return 1;
+        end
+        return 0;
+    endfunction : overflow 
 
 endclass : pipeline_scoreboard

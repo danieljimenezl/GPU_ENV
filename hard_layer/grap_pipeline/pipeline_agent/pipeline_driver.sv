@@ -57,30 +57,30 @@ class pipeline_driver extends base_driver#(
                 ifc.camDc[9:0] <= tlm.cam["Dc"]["mantissa"];
 
                 //Cos Values
-                ifc.cosRoll[15] <= tlm.cosValues["roll"]["sign"];
-                ifc.cosRoll[14:10] <= tlm.cosValues["roll"]["exponent"];
-                ifc.cosRoll[9:0] <= tlm.cosValues["roll"]["mantissa"];
+                ifc.cosRoll[15] <= tlm.cosValues["Roll"]["sign"];
+                ifc.cosRoll[14:10] <= tlm.cosValues["Roll"]["exponent"];
+                ifc.cosRoll[9:0] <= tlm.cosValues["Roll"]["mantissa"];
 
-                ifc.cosPitch[15] <= tlm.cosValues["pitch"]["sign"];
-                ifc.cosPitch[14:10] <= tlm.cosValues["pitch"]["exponent"];
-                ifc.cosPitch[9:0] <= tlm.cosValues["pitch"]["mantissa"];
+                ifc.cosPitch[15] <= tlm.cosValues["Pitch"]["sign"];
+                ifc.cosPitch[14:10] <= tlm.cosValues["Pitch"]["exponent"];
+                ifc.cosPitch[9:0] <= tlm.cosValues["Pitch"]["mantissa"];
 
-                ifc.cosYaw[15] <= tlm.cosValues["yaw"]["sign"];
-                ifc.cosYaw[14:10] <= tlm.cosValues["yaw"]["exponent"];
-                ifc.cosYaw[9:0] <= tlm.cosValues["yaw"]["mantissa"];
+                ifc.cosYaw[15] <= tlm.cosValues["Yaw"]["sign"];
+                ifc.cosYaw[14:10] <= tlm.cosValues["Yaw"]["exponent"];
+                ifc.cosYaw[9:0] <= tlm.cosValues["Yaw"]["mantissa"];
 
                 //Sen Values
-                ifc.senRoll[15] <= tlm.senValues["roll"]["sign"];
-                ifc.senRoll[14:10] <= tlm.senValues["roll"]["exponent"];
-                ifc.senRoll[9:0] <= tlm.senValues["roll"]["mantissa"];
+                ifc.senRoll[15] <= tlm.senValues["Roll"]["sign"];
+                ifc.senRoll[14:10] <= tlm.senValues["Roll"]["exponent"];
+                ifc.senRoll[9:0] <= tlm.senValues["Roll"]["mantissa"];
 
-                ifc.senPitch[15] <= tlm.senValues["pitch"]["sign"];
-                ifc.senPitch[14:10] <= tlm.senValues["pitch"]["exponent"];
-                ifc.senPitch[9:0] <= tlm.senValues["pitch"]["mantissa"];
+                ifc.senPitch[15] <= tlm.senValues["Pitch"]["sign"];
+                ifc.senPitch[14:10] <= tlm.senValues["Pitch"]["exponent"];
+                ifc.senPitch[9:0] <= tlm.senValues["Pitch"]["mantissa"];
 
-                ifc.senYaw[15] <= tlm.senValues["yaw"]["sign"];
-                ifc.senYaw[14:10] <= tlm.senValues["yaw"]["exponent"];
-                ifc.senYaw[9:0] <= tlm.senValues["yaw"]["mantissa"];
+                ifc.senYaw[15] <= tlm.senValues["Yaw"]["sign"];
+                ifc.senYaw[14:10] <= tlm.senValues["Yaw"]["exponent"];
+                ifc.senYaw[9:0] <= tlm.senValues["Yaw"]["mantissa"];
 
                 //scale Values
                 ifc.scaleX[15] <= tlm.scale["x"]["sign"];
