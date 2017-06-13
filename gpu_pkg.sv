@@ -7,6 +7,7 @@ package gpu_pkg;
 
     ///////////////////////////////////////////////
     //  G P U - B A S E
+    `include "gpu_functions.sv"
     `include "base_seq.sv"
     `include "base_driver.sv"
     `include "base_monitor.sv"

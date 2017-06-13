@@ -330,6 +330,9 @@ class pipeline_scoreboard extends base_scoreboard;
                 uRangeY = Y_expected + (Y_expected*precision);
                 dRangeY = Y_expected - (Y_expected*precision);
 
+                $display("X_expected: %0f. Y_expected: %0f.", X_expected, Y_expected);
+                $display("X: %0f. Y: %0f.", outX, outY);
+
                 if(!(outX < uRangeX) && outX > dRangeX)
                     `uvm_error("PIPELINE_MODULE",$psprintf(" DIVIDER OUT_X VALUE: %f. EXPECTED X VALUE: %f.", outX, X_expected));
                 if(!(outY < uRangeY) && outY > dRangeY)

@@ -16,7 +16,7 @@ class pipeline_sequence extends uvm_sequence #(pipeline_tlm);
     //--------------------------------------------
     // body
     task body();
-        repeat (50) begin
+        repeat (2) begin
             tlm = pipeline_tlm::type_id::create(.name("tlm"), .contxt(get_full_name()));
             start_item(tlm);
             assert(tlm.randomize());
