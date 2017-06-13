@@ -14,13 +14,19 @@ class gpu_env extends uvm_env;
     divider_sequencer   divider_seq;
     pipeline_sequencer  pipeline_seq;
 
-    pipeline_scoreboard pipe_scoreboard;
-
     //--------------------------------------------
     // M E M O R Y  M A N A G E R
-    //uart_agent      uart;
-    //sram_agent      sram;
+    uart_agent      uart;
+    sram_agent      sram;
     //memory_agent    memory_controler;
+
+    uart_sequencer uart_seq;
+    //memory_sequencer memory_seq;
+
+    //--------------------------------------------
+    // S C O R E B O A R D S
+    pipeline_scoreboard pipe_scoreboard;
+
 
     `uvm_component_utils_begin(gpu_env)
     `uvm_component_utils_end
@@ -55,6 +61,11 @@ class gpu_env extends uvm_env;
             pipeline = pipeline_agent::type_id::create("pipeline",this);
             pipeline_seq = pipeline_sequencer::type_id::create("pipeline_seq",this);
         end
+        else if(CONFIG.get_value("GPU_MEMORY_UART")) begin
+            uart = uart_agent::type_id::create("uart",this);
+            uart_seq = uart_sequencer::type_id::create("uart_seq",this);
+            sram = sram_agent::type_id::create("sram",this);
+        end
 
         pipe_scoreboard = pipeline_scoreboard::type_id::create("pipe_scoreboard",this);
     endfunction : build_phase
@@ -78,6 +89,11 @@ class gpu_env extends uvm_env;
         else if(CONFIG.get_value("GPU_PIPELINE")) begin
             pipeline.driver.seq_item_port.connect(pipeline_seq.seq_item_export);
             pipeline.monitor.ch_out.connect(pipe_scoreboard.pipeline_export);
+        end
+        else if(CONFIG.get_value("")) begin
+            uart.driver.seq_item_port.connect(uart_seq.seq_item_export);
+            //uart.monitor.ch_out.connect(memory_scoreboard.uart_export);
+            //sram.monitor.ch_out.connect(memory_scoreboard.sram_export);
         end
     endfunction : connect_phase
 

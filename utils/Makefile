@@ -21,7 +21,8 @@ GRAP_PIPELINE = +incdir+../hard_layer/grap_pipeline/adder_agent/	\
 				+incdir+../hard_layer/grap_pipeline/divider_agent/	\
 				+incdir+../hard_layer/grap_pipeline/pipeline_agent/	\
 
-MEMORY_MANAGER = +incdir+../hard_layer/memory_manager/uart_agent/ \
+MEMORY_MANAGER = 	+incdir+../hard_layer/memory_manager/uart_agent/ \
+					+incdir+../hard_layer/memory_manager/sram_agent/ \
 
 SOFT_LAYER = +incdir+../soft_layer/	\
 
@@ -31,6 +32,7 @@ GPU_INTERFACES =../gpu_base/base_ifc.sv										\
 				../hard_layer/grap_pipeline/divider_agent/divider_ifc.sv	\
 				../hard_layer/grap_pipeline/pipeline_agent/pipeline_ifc.sv	\
 				../hard_layer/memory_manager/uart_agent/uart_ifc.sv			\
+				../hard_layer/memory_manager/sram_agent/sram_ifc.sv			\
 
 #//////////////////////////////////////////////////////////
 #				V E R I L O G    F I L E S
