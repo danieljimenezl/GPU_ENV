@@ -49,6 +49,10 @@ class adder_driver extends base_driver#(
                 ifc.in1_adder[14:10] <= tlm.in1_exponent;
                 ifc.in1_adder[9:0] <= tlm.in1_mantissa;
 
+                gpu_log(file,"adder_driver","TLM send");
+                gpu_log(file,"adder_driver",$psprintf("IN0. [Sign: %0d] [Exponent: %0b] [Mantissa: %0b]" ,tlm.in0_sign, tlm.in0_exponent, tlm.in0_mantissa));
+                gpu_log(file,"adder_driver",$psprintf("IN1. [Sign: %0d] [Exponent: %0b] [Mantissa: %0b]" ,tlm.in1_sign, tlm.in1_exponent, tlm.in1_mantissa));
+
             seq_item_port.item_done();
         end
     endtask : input_values

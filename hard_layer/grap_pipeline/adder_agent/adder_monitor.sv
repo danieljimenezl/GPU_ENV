@@ -64,6 +64,9 @@ class adder_monitor extends base_monitor#(
                 tlm.out_exponent = ifc.out_adder[14:10];
                 tlm.out_mantissa = ifc.out_adder[9:0];
 
+                gpu_log(file,"adder_monitor","TLM received");
+                gpu_log(file,"adder_monitor",$psprintf("DUT_OUT. [Sign: %0d] [Exponent: %0b] [Mantissa: %0b]" ,tlm.out_sign, tlm.out_exponent, tlm.out_mantissa));
+
                 ch_out.write(tlm);
         end
     endtask : output_value

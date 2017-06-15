@@ -1,14 +1,14 @@
-class pipeline_sequence extends uvm_sequence #(pipeline_tlm);
+class sram_sequence extends uvm_sequence #(sram_tlm);
 
-    pipeline_tlm tlm;
+    sram_tlm tlm;
 
-    `uvm_object_utils_begin(pipeline_sequence)
+    `uvm_object_utils_begin(sram_sequence)
     `uvm_object_utils_end
 
 
     //--------------------------------------------
     // new
-    function new (string name = "pipeline_sequence");
+    function new (string name = "sram_sequence");
         super.new(name);
     endfunction : new
 
@@ -16,12 +16,12 @@ class pipeline_sequence extends uvm_sequence #(pipeline_tlm);
     //--------------------------------------------
     // body
     task body();
-        repeat (2) begin
-            tlm = pipeline_tlm::type_id::create(.name("tlm"), .contxt(get_full_name()));
+        repeat (50) begin
+            tlm = sram_tlm::type_id::create(.name("tlm"), .contxt(get_full_name()));
             start_item(tlm);
             assert(tlm.randomize());
             finish_item(tlm);
         end
     endtask : body
 
-endclass : pipeline_sequence
+endclass : sram_sequence

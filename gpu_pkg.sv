@@ -7,6 +7,7 @@ package gpu_pkg;
 
     ///////////////////////////////////////////////
     //  G P U - B A S E
+    `include "gpu_functions.sv"
     `include "base_seq.sv"
     `include "base_driver.sv"
     `include "base_monitor.sv"
@@ -67,6 +68,12 @@ package gpu_pkg;
     `include "uart_agent.sv"
 
     //  S R A M
+    `include "sram_seq.sv"
+    //`include "sram_seq_lib.sv"
+    //`include "sram_sequencer.sv"
+    `include "sram_driver.sv"
+    `include "sram_monitor.sv"
+    `include "sram_agent.sv"
 
     //  M E M O R Y  C O N T R O L E R
 
