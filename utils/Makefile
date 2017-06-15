@@ -72,7 +72,7 @@ endif
 #//////////////////////////////////////////////////////////
 
 
-IRUN_ARGS = -sv '+tcl+dump.tcl' -access +rwc
+IRUN_ARGS = -sv '+tcl+dump.tcl' -access +rwc -timescale 1ns/1ns
 
 UVM_ARGS = -uvm -define $(TEST)
 

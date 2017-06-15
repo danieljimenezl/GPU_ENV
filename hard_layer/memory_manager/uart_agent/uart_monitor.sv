@@ -33,21 +33,29 @@ class uart_monitor extends base_monitor#(
 
     //--------------------------------------------
     // input values
-    /*task input_values();
+    task input_values();
+        int data;
+
         forever begin
-            @(ifc.in0_uart, ifc.in1_uart);
-                tlm = new();
-                tlm.tlm_type = ADD_INPUTS;
+            @(ifc.rx_ready);
+                if (ifc.rx_ready == 'b1) begin
+                    tlm = new();
+                    tlm.tlm_type = UART_GPU_INPUT;
+                    data = ifc.rx_byte;
+                    data = data << 8;
+                    @(ifc.rx_ready);
+                    @(ifc.rx_ready);
+                    data = data | ifc.rx_byte;
 
-                tlm.in0_sign = ifc.in0_uart[0];
-                tlm.in0_exponent = ifc.in0_uart[5:1];
-                tlm.in0_mantissa = ifc.in0_uart[15:6];
+                    if(find(data) == 1)
+                        tlm.tlm_cmd = data;
+                    else begin
+                        tlm.tlm_cmd = DATA;
+                        tlm.data = data;
+                    end
 
-                tlm.in1_sign = ifc.in0_uart[0];
-                tlm.in1_exponent = ifc.in0_uart[5:1];
-                tlm.in1_mantissa = ifc.in0_uart[15:6];
-
-                ch_out.write(tlm);
+                    ch_out.write(tlm);
+                end
         end
     endtask : input_values
 
@@ -55,17 +63,53 @@ class uart_monitor extends base_monitor#(
     //--------------------------------------------
     // output value
     task output_value();
+        int data;
+
         forever begin
-            @(ifc.out_uart);
-                tlm = new();
-                tlm.tlm_type = ADD_RESULT;
+            @(ifc.tx_ready);
+                if (ifc.tx_ready == 'b1) begin
+                    tlm = new();
+                    tlm.tlm_type = UART_GPU_OUTPUT;
+                    data = ifc.tx_byte;
+                    data = data << 8;
+                    @(ifc.tx_ready);
+                    @(ifc.tx_ready);
+                    data = data | ifc.tx_byte;
 
-                tlm.out_sign = ifc.out_uart[0];
-                tlm.out_exponent = ifc.out_uart[5:1];
-                tlm.out_mantissa = ifc.out_uart[15:6];
+                    if(find(data) == 1)
+                        tlm.tlm_cmd = data;
+                    else begin
+                        tlm.tlm_cmd = DATA;
+                        tlm.data = data;
+                    end
 
-                ch_out.write(tlm);
+                    ch_out.write(tlm);
+                end
+
         end
-    endtask : output_value*/
+    endtask : output_value
+
+
+    //--------------------------------------------
+    // find function
+     function int find(int data);
+        uart_tlm_cmd cmd = cmd.first();
+        bit found = 0;
+        //int temp = cmd.first();
+
+            while (cmd!=cmd.last && found!=1) begin
+                if(data == cmd)
+                    found = 1;
+                else begin
+                    cmd = cmd.next;
+                    if(cmd == cmd.last)
+                        if(data == cmd)
+                            found = 1;
+                end
+            end
+
+        return found;
+
+    endfunction : find
 
 endclass : uart_monitor

@@ -42,7 +42,7 @@ class uart_driver extends base_driver#(
             data_low = tlm.tlm_cmd & 32'hFF;
             data_high = (tlm.tlm_cmd>>8) & 32'hFF;
 
-            if (tlm.tlm_cmd == DATA || tlm.tlm_cmd == ADDRESS) begin
+            if (tlm.tlm_cmd == DATA) begin
                 data_low = tlm.data & 32'hFF;
                 data_high = (tlm.data>>8) & 32'hFF;
             end
