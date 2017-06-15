@@ -293,19 +293,31 @@ class pipeline_scoreboard extends base_scoreboard;
         forever begin
             pipeline_fifo.get(tlm);
             if(tlm.tlm_type == PIPELINE_INPUTS) begin
-                foreach( tlm.camVer[i] )
+                foreach( tlm.camVer[i] ) begin
                     camVer[i] = numToReal(tlm.camVer[i]["sign"], tlm.camVer[i]["mantissa"], tlm.camVer[i]["exponent"]);
+                    //$display("CamVer%s: %0f", i, camVer[i]);
+                end
                 camDc = numToReal(tlm.cam["DC"]["sign"], tlm.cam["Dc"]["mantissa"], tlm.cam["Dc"]["exponent"]);
-                foreach( tlm.cosValues[i] )
+                foreach( tlm.cosValues[i] ) begin
                     cosValues[i] = numToReal(tlm.cosValues[i]["sign"], tlm.cosValues[i]["mantissa"], tlm.cosValues[i]["exponent"]);
-                foreach( tlm.senValues[i] )
+                    //$display("cos%s: %0f", i, cosValues[i]);
+                end
+                foreach( tlm.senValues[i] ) begin
                     senValues[i] = numToReal(tlm.senValues[i]["sign"], tlm.senValues[i]["mantissa"], tlm.senValues[i]["exponent"]);
-                foreach( tlm.scale[i] )
+                    //$display("sen%s: %0f", i, senValues[i]);
+                end
+                foreach( tlm.scale[i] ) begin
                     scale[i] = numToReal(tlm.scale[i]["sign"], tlm.scale[i]["mantissa"], tlm.scale[i]["exponent"]);
-                foreach( tlm.trans[i] )
+                    //$display("scale%s: %0f", i, scale[i]);
+                end
+                foreach( tlm.trans[i] ) begin
                     trans[i] = numToReal(tlm.trans[i]["sign"], tlm.trans[i]["mantissa"], tlm.trans[i]["exponent"]);
-                foreach( tlm.vertex[i] )
+                    //$display("trans%s: %0f", i, trans[i]);
+                end
+                foreach( tlm.vertex[i] ) begin
                     vertex[i] = numToReal(tlm.vertex[i]["sign"], tlm.vertex[i]["mantissa"], tlm.vertex[i]["exponent"]);
+                    //$display("vertex%s: %0f", i, vertex[i]);
+                end
 
                 X_p = (vertex["x"]*scale["x"]*(cosValues["Yaw"]*cosValues["Roll"] + senValues["Yaw"]*senValues["Pitch"]*senValues["Roll"])) + (vertex["y"]*scale["y"]*(senValues["Yaw"]*senValues["Pitch"]*cosValues["Roll"] - cosValues["Yaw"]*senValues["Roll"])) + (vertex["z"]*scale["z"]*(senValues["Yaw"]*cosValues["Pitch"])) + trans["x"];
 
@@ -330,13 +342,13 @@ class pipeline_scoreboard extends base_scoreboard;
                 uRangeY = Y_expected + (Y_expected*precision);
                 dRangeY = Y_expected - (Y_expected*precision);
 
-                $display("X_expected: %0f. Y_expected: %0f.", X_expected, Y_expected);
+                $display("\nTIME: %0d\nX_expected: %0f. Y_expected: %0f.", $time, X_expected, Y_expected);
                 $display("X: %0f. Y: %0f.", outX, outY);
 
                 if(!(outX < uRangeX) && outX > dRangeX)
-                    `uvm_error("PIPELINE_MODULE",$psprintf(" DIVIDER OUT_X VALUE: %f. EXPECTED X VALUE: %f.", outX, X_expected));
+                    `uvm_error("PIPELINE_MODULE",$psprintf(" PIPELINE OUT_X VALUE: %f. EXPECTED X VALUE: %f.", outX, X_expected));
                 if(!(outY < uRangeY) && outY > dRangeY)
-                    `uvm_error("PIPELINE_MODULE",$psprintf(" DIVIDER OUT_Y VALUE: %f. EXPECTED Y VALUE: %f.", outY, Y_expected));
+                    `uvm_error("PIPELINE_MODULE",$psprintf(" PIPELINE OUT_Y VALUE: %f. EXPECTED Y VALUE: %f.", outY, Y_expected));
             end
         end
     endtask : pipeline_checker
@@ -345,7 +357,7 @@ class pipeline_scoreboard extends base_scoreboard;
     //--------------------------------------------
     // Convert num to real
     function real numToReal(int sign, int mantissa, int exponent);
-        real result = 0.0;
+        real result = 1.0;
         mantissa0 = mantissa;
 
         for(int i=0;i<10;i++)

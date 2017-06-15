@@ -55,7 +55,7 @@ module gpu_tb();
     divider_ifc divider_ifc();
     pipeline_ifc pipeline_ifc();
     uart_ifc uart_ifc();
-
+    sram_ifc sram_ifc();
 
     `ifdef GPU_PIPELINE_ADDER
          adderhalfprecision adder(
