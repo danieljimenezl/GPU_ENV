@@ -4,7 +4,7 @@ MULT ?= 0
 DIVIDER ?= 0
 PIPELINE ?= 0
 UART ?= 0
-DRAM ?= 0
+MEMORY ?= 0
 SYSTEM ?= 0
 
 #//////////////////////////////////////////////////////////
@@ -34,6 +34,7 @@ GPU_INTERFACES =../gpu_base/base_ifc.sv										\
 				../hard_layer/memory_manager/uart_agent/uart_ifc.sv			\
 				../hard_layer/memory_manager/sram_agent/sram_ifc.sv			\
 
+
 #//////////////////////////////////////////////////////////
 #				V E R I L O G    F I L E S
 #//////////////////////////////////////////////////////////
@@ -43,7 +44,9 @@ RTL =	+incdir+../../rtl/graphic_pipeline/adder/			\
 		+incdir+../../rtl/graphic_pipeline/multiplier/		\
 		+incdir+../../rtl/graphic_pipeline/divider/			\
 		+incdir+../../rtl/graphic_pipeline/graphic_pipeline/\
-		+incdir+../../rtl/memory_manager/					\
+		+incdir+../../rtl/memory_manager/mem_ctrl/			\
+		+incdir+../../rtl/memory_manager/sram/				\
+
 
 #//////////////////////////////////////////////////////////
 #					T E S T S

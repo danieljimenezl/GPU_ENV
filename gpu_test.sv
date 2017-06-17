@@ -10,6 +10,10 @@ class gpu_test extends uvm_test;
     divider_sequence divider_seq;
     pipeline_sequence pipeline_seq;
 
+    //--------------------------------------------
+    // M E M O R Y  M A N A G E R
+    uart_sequence uart_seq;
+
     `uvm_component_utils_begin(gpu_test)
     `uvm_component_utils_end
 
@@ -37,7 +41,8 @@ class gpu_test extends uvm_test;
             divider_test();
         else if(CONFIG.get_value("GPU_PIPELINE"))
             pipeline_test();
-
+        else if(CONFIG.get_value("GPU_MEMORY_UART"))
+            uart_test();
         phase.drop_objection(.obj(this));
     endtask : run_phase
 
@@ -83,5 +88,15 @@ class gpu_test extends uvm_test;
             pipeline_seq.start(env.pipeline_seq);
         join
     endtask : pipeline_test
+
+    //--------------------------------------------
+    // UART test
+    task uart_test();
+        uart_seq = uart_sequence::type_id::create(.name("uart_seq"), .contxt(get_full_name()));
+        assert(uart_seq.randomize());
+        fork
+            uart_seq.start(env.uart_seq);
+        join
+    endtask : uart_test
 
 endclass : gpu_test

@@ -90,7 +90,7 @@ class gpu_env extends uvm_env;
             pipeline.driver.seq_item_port.connect(pipeline_seq.seq_item_export);
             pipeline.monitor.ch_out.connect(pipe_scoreboard.pipeline_export);
         end
-        else if(CONFIG.get_value("")) begin
+        else if(CONFIG.get_value("GPU_MEMORY_UART")) begin
             uart.driver.seq_item_port.connect(uart_seq.seq_item_export);
             //uart.monitor.ch_out.connect(memory_scoreboard.uart_export);
             //sram.monitor.ch_out.connect(memory_scoreboard.sram_export);

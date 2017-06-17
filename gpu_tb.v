@@ -21,6 +21,11 @@
     `include "mem_ctrl.v"
 `endif
 
+`ifdef GPU_MEMORY_CONTROLLER
+    `include "mem_ctrl.v"
+    `include "sram.v"
+`endif
+
 module gpu_tb();
 
     import gpu_pkg::*;
@@ -46,6 +51,9 @@ module gpu_tb();
     //Memory Controller
     wire [7:0] rx_byte, tx_byte;
     wire rx_ready, tx_ready, tx_sent, rx_error;
+    wire [21:0] sram_address;
+    wire [15:0] sram_data;
+    wire validRequest, write, completeRequest;
 
     logic clk;
 
@@ -105,7 +113,13 @@ module gpu_tb();
             .iRxReady(rx_ready),
             .oTxReady(tx_ready),
             .iTxSent(tx_sent),
-            .iRxError(rx_error)
+            .iRxError(rx_error),
+
+            .ioData(sram_data),
+            .iValidRead(completeRequest),
+            .oAddress(sram_address),
+            .oValidRequest(validRequest),
+            .oWrite(write)
         );
     `endif
 
@@ -174,6 +188,15 @@ module gpu_tb();
     assign rx_error = uart_ifc.rx_error;
     assign uart_ifc.base.clk = clk;
 
+    //--------------------------------------------
+    //SRAM Module
+    assign sram_ifc.address = sram_address;
+    assign sram_ifc.validRequest = validRequest;
+    assign sram_ifc.write = write;
+    assign completeRequest = sram_ifc.completeRequest;
+    assign sram_ifc.data = sram_data;
+    assign sram_data = sram_ifc.data;
+    assign sram_ifc.base.clk = clk;
 
     always #5 clk <= !clk;
 
@@ -181,8 +204,10 @@ module gpu_tb();
         uvm_resource_db#(virtual adder_ifc)::set(.scope("*"), .name("adder_ifc"), .val(adder_ifc));
         uvm_resource_db#(virtual mult_ifc)::set(.scope("*"), .name("mult_ifc"), .val(mult_ifc));
         uvm_resource_db#(virtual divider_ifc)::set(.scope("*"), .name("divider_ifc"), .val(divider_ifc));
-        uvm_resource_db#(virtual uart_ifc)::set(.scope("*"), .name("uart_ifc"), .val(uart_ifc));
         uvm_resource_db#(virtual pipeline_ifc)::set(.scope("*"), .name("pipeline_ifc"), .val(pipeline_ifc));
+
+        uvm_resource_db#(virtual uart_ifc)::set(.scope("*"), .name("uart_ifc"), .val(uart_ifc));
+        uvm_resource_db#(virtual sram_ifc)::set(.scope("*"), .name("sram_ifc"), .val(sram_ifc));
 
         clk = 0;
         run_test("gpu_test");
