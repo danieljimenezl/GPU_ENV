@@ -26,7 +26,7 @@ class uart_tlm extends base_tlm;
     rand int data;
 
     constraint valid {
-        data inside {0,32'hFFFF};
+        data inside {[0:32'hFFFF]};
     }
 
     `uvm_object_utils_begin(uart_tlm)
