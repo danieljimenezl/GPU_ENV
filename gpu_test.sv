@@ -12,7 +12,8 @@ class gpu_test extends uvm_test;
 
     //--------------------------------------------
     // M E M O R Y  M A N A G E R
-    uart_sequence uart_seq;
+    uart_init_sequence uart_init_seq;
+    uart_cam_config_sequence uart_cam_config_seq;
 
     `uvm_component_utils_begin(gpu_test)
     `uvm_component_utils_end
@@ -92,10 +93,13 @@ class gpu_test extends uvm_test;
     //--------------------------------------------
     // UART test
     task uart_test();
-        uart_seq = uart_sequence::type_id::create(.name("uart_seq"), .contxt(get_full_name()));
-        assert(uart_seq.randomize());
+        uart_init_seq = uart_init_sequence::type_id::create(.name("uart_init_seq"), .contxt(get_full_name()));
+        uart_cam_config_seq = uart_cam_config_sequence::type_id::create(.name("uart_cam_config_seq"), .contxt(get_full_name()));
+        assert(uart_init_seq.randomize());
+        assert(uart_cam_config_seq.randomize());
         fork
-            uart_seq.start(env.uart_seq);
+            //uart_init_seq.start(env.uart_seq);
+            uart_cam_config_seq.start(env.uart_seq);
         join
     endtask : uart_test
 
