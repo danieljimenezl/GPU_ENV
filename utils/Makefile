@@ -1,5 +1,5 @@
 
-ADDER ?= 1
+ADDER ?= 0
 MULT ?= 0
 DIVIDER ?= 0
 PIPELINE ?= 0

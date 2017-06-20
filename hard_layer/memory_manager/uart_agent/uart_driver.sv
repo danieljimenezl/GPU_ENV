@@ -25,6 +25,7 @@ class uart_driver extends base_driver#(
     task run_phase(uvm_phase phase);
         fork
             drive();
+            recieve();
         join
     endtask : run_phase
 
@@ -50,16 +51,29 @@ class uart_driver extends base_driver#(
             ifc.rx_byte<=data_high;
             @(posedge ifc.base.clk);
                 ifc.rx_ready<=1;
-            @(posedge ifc.base.clk)
+            @(posedge ifc.base.clk);
                 ifc.rx_ready<=0;
             ifc.rx_byte<=data_low;
             @(posedge ifc.base.clk);
                 ifc.rx_ready<=1;
-            @(posedge ifc.base.clk)
+            @(posedge ifc.base.clk);
                 ifc.rx_ready<=0;
 
             seq_item_port.item_done();
         end
     endtask : drive
+
+    task recieve();
+        ifc.tx_sent<=0;
+
+        forever begin
+            @(posedge ifc.base.clk);
+                if(ifc.tx_ready==1) begin
+                    ifc.tx_sent<=1;
+                    @(posedge ifc.base.clk);
+                        ifc.tx_sent<=0;
+                end
+        end
+    endtask : recieve
 
 endclass : uart_driver

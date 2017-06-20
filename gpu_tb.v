@@ -181,9 +181,9 @@ module gpu_tb();
     //--------------------------------------------
     //UART Module
     assign rx_byte = uart_ifc.rx_byte;
-    assign tx_byte = uart_ifc.tx_byte;
+    assign uart_ifc.tx_byte = tx_byte;
     assign rx_ready = uart_ifc.rx_ready;
-    assign tx_ready = uart_ifc.tx_ready;
+    assign uart_ifc.tx_ready = tx_ready;
     assign tx_sent = uart_ifc.tx_sent;
     assign rx_error = uart_ifc.rx_error;
     assign uart_ifc.base.clk = clk;

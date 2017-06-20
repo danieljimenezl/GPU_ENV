@@ -20,8 +20,8 @@ typedef enum {
 
 class uart_tlm extends base_tlm;
 
-    uart_tlm_type tlm_type;
-    uart_tlm_cmd tlm_cmd;
+    rand uart_tlm_type tlm_type;
+    rand uart_tlm_cmd tlm_cmd;
 
     rand int data;
 
