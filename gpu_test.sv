@@ -14,6 +14,11 @@ class gpu_test extends uvm_test;
     // M E M O R Y  M A N A G E R
     uart_init_sequence uart_init_seq;
     uart_cam_config_sequence uart_cam_config_seq;
+    uart_create_obj_sequence uart_create_obj_seq;
+    uart_vert_config_sequence uart_vert_config_seq;
+    uart_close_obj_sequence uart_close_obj_seq;
+    uart_modify_obj_sequence uart_modify_obj_seq;
+
 
     `uvm_component_utils_begin(gpu_test)
     `uvm_component_utils_end
@@ -95,12 +100,25 @@ class gpu_test extends uvm_test;
     task uart_test();
         uart_init_seq = uart_init_sequence::type_id::create(.name("uart_init_seq"), .contxt(get_full_name()));
         uart_cam_config_seq = uart_cam_config_sequence::type_id::create(.name("uart_cam_config_seq"), .contxt(get_full_name()));
+        uart_create_obj_seq = uart_create_obj_sequence::type_id::create(.name("uart_create_obj_seq"), .contxt(get_full_name()));
+        uart_vert_config_seq = uart_vert_config_sequence::type_id::create(.name("uart_vert_config_seq"), .contxt(get_full_name()));
+        uart_close_obj_seq = uart_close_obj_sequence::type_id::create(.name("uart_close_obj_seq"), .contxt(get_full_name()));
+        uart_modify_obj_seq = uart_modify_obj_sequence::type_id::create(.name("uart_modify_obj_seq"), .contxt(get_full_name()));
+
         assert(uart_init_seq.randomize());
         assert(uart_cam_config_seq.randomize());
-        fork
-            //uart_init_seq.start(env.uart_seq);
-            uart_cam_config_seq.start(env.uart_seq);
-        join
+        assert(uart_create_obj_seq.randomize());
+        assert(uart_vert_config_seq.randomize());
+        assert(uart_close_obj_seq.randomize());
+        assert(uart_modify_obj_seq.randomize());
+
+        uart_init_seq.start(env.uart_seq);
+        uart_cam_config_seq.start(env.uart_seq);
+        uart_create_obj_seq.start(env.uart_seq);
+        uart_vert_config_seq.start(env.uart_seq);
+        uart_close_obj_seq.start(env.uart_seq);
+        uart_modify_obj_seq.start(env.uart_seq);
+
     endtask : uart_test
 
 endclass : gpu_test
