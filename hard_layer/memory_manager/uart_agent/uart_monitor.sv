@@ -25,8 +25,8 @@ class uart_monitor extends base_monitor#(
     // run_phase
     task run_phase(uvm_phase phase);
         fork
-            //input_values();
-            //output_value();
+            input_values();
+            output_value();
         join
     endtask : run_phase
 
@@ -37,7 +37,7 @@ class uart_monitor extends base_monitor#(
         int data;
 
         forever begin
-            @(ifc.rx_ready);
+            @(ifc.base.clk);
                 if (ifc.rx_ready == 'b1) begin
                     tlm = new();
                     tlm.tlm_type = UART_GPU_INPUT;
@@ -47,13 +47,15 @@ class uart_monitor extends base_monitor#(
                     @(ifc.rx_ready);
                     data = data | ifc.rx_byte;
 
-                    if(find(data) == 1)
+                    if(find(data) == 1) begin
                         tlm.tlm_cmd = data;
+                    end
                     else begin
                         tlm.tlm_cmd = DATA;
                         tlm.data = data;
                     end
 
+                    @(ifc.rx_ready);
                     ch_out.write(tlm);
                 end
         end
@@ -66,7 +68,7 @@ class uart_monitor extends base_monitor#(
         int data;
 
         forever begin
-            @(ifc.tx_ready);
+            @(ifc.base.clk);
                 if (ifc.tx_ready == 'b1) begin
                     tlm = new();
                     tlm.tlm_type = UART_GPU_OUTPUT;
@@ -76,12 +78,21 @@ class uart_monitor extends base_monitor#(
                     @(ifc.tx_ready);
                     data = data | ifc.tx_byte;
 
-                    if(find(data) == 1)
+                    if(find(data) == 1) begin
                         tlm.tlm_cmd = data;
+                        gpu_log(file,"uart_driver",$psprintf("Executing: %s --------- Done\n", tlm.tlm_cmd.name));
+                    end
+                    else if (find(data) == 2) begin
+                        tlm.tlm_cmd = COMPL;
+                        tlm.data = data;
+                        gpu_log(file,"uart_monitor",$psprintf(" --------------- Request accepted"));
+                    end
                     else begin
                         tlm.tlm_cmd = DATA;
                         tlm.data = data;
                     end
+
+                    @(ifc.tx_ready);
 
                     ch_out.write(tlm);
                 end
@@ -94,22 +105,25 @@ class uart_monitor extends base_monitor#(
     // find function
      function int find(int data);
         uart_tlm_cmd cmd = cmd.first();
-        bit found = 0;
-        //int temp = cmd.first();
+        int found = 0;
+        int data_compl = (~data)&'h0000FFFF;
 
-            while (cmd!=cmd.last && found!=1) begin
+            while (cmd!=cmd.last && found==0) begin
                 if(data == cmd)
                     found = 1;
+                else if (data_compl == cmd) begin
+                    found = 2;
+                end
                 else begin
                     cmd = cmd.next;
                     if(cmd == cmd.last)
                         if(data == cmd)
                             found = 1;
+                        if(data_compl == cmd)
+                            found = 2;
                 end
             end
-
         return found;
-
     endfunction : find
 
-endclass : uart_monitor
+endclass 

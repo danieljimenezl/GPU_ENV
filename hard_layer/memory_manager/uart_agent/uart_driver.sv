@@ -72,7 +72,7 @@ class uart_driver extends base_driver#(
 
             else if (flag == 0) begin
                 flag = 1;
-                gpu_log(file,"uart_driver",$psprintf("Executing: %s", tlm.tlm_cmd.name));
+                gpu_log(file,"uart_driver",$psprintf("Executing: %s --------- Request send", tlm.tlm_cmd.name));
             end
 
                 seq_item_port.item_done();

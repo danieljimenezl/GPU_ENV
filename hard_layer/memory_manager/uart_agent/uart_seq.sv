@@ -15,7 +15,8 @@ typedef enum {
     ERROR       =   'h1414,
     BUSY        =   'h4141,
     END         =   'hFFFF,
-    DATA        =   'h1111
+    DATA        =   'h1111,
+    COMPL       =   'h2222
 } uart_tlm_cmd;
 
 class uart_tlm extends base_tlm;
