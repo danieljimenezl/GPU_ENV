@@ -44,7 +44,7 @@ class sram_monitor extends base_monitor#(
                 else
                     tlm.tlm_type = SRAM_READ;
 
-//                ch_out.write(tlm);
+                ch_out.write(tlm);
         end
     endtask : controller_values
 
