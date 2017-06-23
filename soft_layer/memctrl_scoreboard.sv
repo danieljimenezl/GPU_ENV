@@ -1,3 +1,14 @@
+typedef enum {
+    INIT,
+    CAM,
+    CRE,
+    VEC,
+    CLO,
+    MOD,
+    REF
+
+} state_enum;
+
 class memctrl_scoreboard extends base_scoreboard;
 
     gpu_config CONFIG;
@@ -46,20 +57,83 @@ class memctrl_scoreboard extends base_scoreboard;
     //--------------------------------------------
     // run_phase
     task run_phase(uvm_phase phase);
+        state_enum state;
+
         fork
+            uart_tlm tlm = new();
+            uart_fifo.get(tlm);
+
+            if (tlm.tlm_type == UART_GPU_INPUT) begin
+                if (tlm.tlm_cmd == INITIALIZE) begin
+                    state = INIT;
+
+                    forever begin
+                        case (state)
+                            INIT    :   initialize();
+                            //CAM     :   camera();
+                            //CRE     :   create();
+                            //VEC     :   vector();
+                            //CLO     :   close();
+                            //MOD     :   modify();
+                            //REF     :   refresh();
+
+                        endcase
+                    end
+                end
+            end
         join
     endtask : run_phase
 
 
     //--------------------------------------------
-    // uart checker
-    task uart_checker();
-        uart_tlm tlm;
-        tlm = new();
-
-        forever begin
-            uart_fifo.get(tlm);
+    // INIT
+    task initialize();
+        int complement;
+        uart_fifo.get(tlm);
+        complement = (~INIT) & 'h0000FFFF;
+        if (tlm.tlm_type == UART_GPU_OUTPUT && tlm.tlm_cmd == COMPL) begin
+            if (tlm.data != complement)
+                `uvm_error("UART_MODULE",$psprintf("INIT RESPONSE NOT RECEIVED"));
+            else
+                `uvm_info("UART_MODULE",$psprintf("INIT STARTED"),UVM_LOW);
         end
-    endtask : uart_checker
+        else
+            `uvm_error("UART_MODULE",$psprintf("NOT RESPONSE RECEIVED"));
+
+        uart_fifo.get(tlm);
+
+        uart_fifo.get(tlm);
+        if (tlm.tlm_type == UART_GPU_INPUT && tlm.tlm_cmd == ENABLE)
+            `uvm_info("UART_MODULE",$psprintf("GPU ENABLE"),UVM_LOW);
+        else begin
+            `uvm_info("UART_MODULE",$psprintf("GPU DISABLE"),UVM_LOW);
+            uart_fifo.get(tlm);
+
+            if (tlm.tlm_type == UART_GPU_INPUT && tlm.tlm_cmd == INITIALIZE)
+                initialize();
+            else
+                `uvm_error("UART_MODULE",$psprintf("BAD COMAND RECIEVED"));
+        end
+
+        uart_fifo.get(tlm);
+
+        uart_fifo.get(tlm);
+        if (tlm.tlm_type == UART_GPU_INPUT && tlm.tlm_cmd == END)
+            `uvm_info("UART_MODULE",$psprintf("DRIVER INIT TRANSMITION COMPLETE"),UVM_LOW);
+        else
+            `uvm_error("UART_MODULE",$psprintf("BAD COMAND RECIEVED"));
+
+        uart_fifo.get(tlm);
+        if (tlm.tlm_type == UART_GPU_OUTPUT && tlm.tlm_cmd == INITIALIZE)
+            `uvm_info("UART_MODULE",$psprintf("ACK INIT TRANSMITION COMPLETE"),UVM_LOW);
+        else
+            `uvm_error("UART_MODULE",$psprintf("TRANSACTION UNFINISHED"));
+
+        uart_fifo.get(tlm);
+        if (tlm.tlm_type == UART_GPU_INPUT && tlm.tlm_cmd == CAM_CONFIG)
+            state = CAM;
+        else
+            `uvm_error("UART_MODULE",$psprintf("EXPECTING CAM CONFIG COMMAND"));
+    endtask :initialize
 
 endclass : memctrl_scoreboard
