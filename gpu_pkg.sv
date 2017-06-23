@@ -82,7 +82,7 @@ package gpu_pkg;
     ///////////////////////////////////////////////
     //  S O F T  L A Y E R
     `include "pipeline_scoreboard.sv"
-
+    `include "memctrl_scoreboard.sv"
 
     `include "../gpu_env.sv"
     `include "../gpu_test.sv"

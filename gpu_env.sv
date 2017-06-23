@@ -26,7 +26,7 @@ class gpu_env extends uvm_env;
     //--------------------------------------------
     // S C O R E B O A R D S
     pipeline_scoreboard pipe_scoreboard;
-
+    memctrl_scoreboard mem_scoreboard;
 
     `uvm_component_utils_begin(gpu_env)
     `uvm_component_utils_end
@@ -48,26 +48,30 @@ class gpu_env extends uvm_env;
         if(CONFIG.get_value("GPU_PIPELINE_ADDER")) begin
             adder = adder_agent::type_id::create("adder",this);
             adder_seq = adder_sequencer::type_id::create("adder_seq",this);
+            pipe_scoreboard = pipeline_scoreboard::type_id::create("pipe_scoreboard",this);
         end
         else if(CONFIG.get_value("GPU_PIPELINE_MULT")) begin
             mult = mult_agent::type_id::create("mult",this);
             mult_seq = mult_sequencer::type_id::create("mult_seq",this);
+            pipe_scoreboard = pipeline_scoreboard::type_id::create("pipe_scoreboard",this);
         end
         else if(CONFIG.get_value("GPU_PIPELINE_DIVIDER")) begin
             divider = divider_agent::type_id::create("divider",this);
             divider_seq = divider_sequencer::type_id::create("divider_seq",this);
+            pipe_scoreboard = pipeline_scoreboard::type_id::create("pipe_scoreboard",this);
         end
         else if(CONFIG.get_value("GPU_PIPELINE")) begin
             pipeline = pipeline_agent::type_id::create("pipeline",this);
             pipeline_seq = pipeline_sequencer::type_id::create("pipeline_seq",this);
+            pipe_scoreboard = pipeline_scoreboard::type_id::create("pipe_scoreboard",this);
         end
         else if(CONFIG.get_value("GPU_MEMORY_UART")) begin
             uart = uart_agent::type_id::create("uart",this);
             uart_seq = uart_sequencer::type_id::create("uart_seq",this);
             sram = sram_agent::type_id::create("sram",this);
+            mem_scoreboard = memctrl_scoreboard::type_id::create("mem_scoreboard",this);
         end
 
-        pipe_scoreboard = pipeline_scoreboard::type_id::create("pipe_scoreboard",this);
     endfunction : build_phase
 
 
@@ -92,8 +96,8 @@ class gpu_env extends uvm_env;
         end
         else if(CONFIG.get_value("GPU_MEMORY_UART")) begin
             uart.driver.seq_item_port.connect(uart_seq.seq_item_export);
-            //uart.monitor.ch_out.connect(memory_scoreboard.uart_export);
-            //sram.monitor.ch_out.connect(memory_scoreboard.sram_export);
+            uart.monitor.ch_out.connect(mem_scoreboard.uart_export);
+            sram.monitor.ch_out.connect(mem_scoreboard.sram_export);
         end
     endfunction : connect_phase
 
