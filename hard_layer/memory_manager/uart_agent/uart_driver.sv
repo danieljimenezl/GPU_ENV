@@ -35,6 +35,7 @@ class uart_driver extends base_driver#(
     task drive();
         int data_high;
         int data_low;
+        bit flag = 0;
 
         forever begin
             uart_tlm tlm = new();
@@ -59,7 +60,22 @@ class uart_driver extends base_driver#(
             @(posedge ifc.base.clk);
                 ifc.rx_ready<=0;
 
-            seq_item_port.item_done();
+            if (tlm.tlm_cmd == DATA || tlm.tlm_cmd == END || tlm.tlm_cmd == ENABLE || flag == 1) begin
+                if (tlm.tlm_cmd == END)
+                    flag = 0;
+
+                if (tlm.tlm_cmd == DATA)
+                    gpu_log(file,"uart_driver",$psprintf("Sending data: 0x%h (%s)", tlm.data, tlm.tlm_cmd.name));
+                else
+                    gpu_log(file,"uart_driver",$psprintf("Sending data: 0x%0h (%s)", tlm.tlm_cmd, tlm.tlm_cmd.name));
+            end
+
+            else if (flag == 0) begin
+                flag = 1;
+                gpu_log(file,"uart_driver",$psprintf("Executing: %s", tlm.tlm_cmd.name));
+            end
+
+                seq_item_port.item_done();
         end
     endtask : drive
 

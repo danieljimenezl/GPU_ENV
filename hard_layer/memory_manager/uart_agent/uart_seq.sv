@@ -23,7 +23,7 @@ class uart_tlm extends base_tlm;
     rand uart_tlm_type tlm_type;
     rand uart_tlm_cmd tlm_cmd;
 
-    rand int data;
+    rand shortint data;
 
     constraint valid {
         data inside {[0:32'hFFFF]};
