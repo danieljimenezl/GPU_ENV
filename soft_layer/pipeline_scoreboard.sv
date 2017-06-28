@@ -297,7 +297,8 @@ class pipeline_scoreboard extends base_scoreboard;
                     camVer[i] = numToReal(tlm.camVer[i]["sign"], tlm.camVer[i]["mantissa"], tlm.camVer[i]["exponent"]);
                     //$display("CamVer%s: %0f", i, camVer[i]);
                 end
-                camDc = numToReal(tlm.cam["DC"]["sign"], tlm.cam["Dc"]["mantissa"], tlm.cam["Dc"]["exponent"]);
+                camDc = numToReal(tlm.cam["Dc"]["sign"], tlm.cam["Dc"]["mantissa"], tlm.cam["Dc"]["exponent"]);
+                //$display("CamDc: %0f", camDc);
                 foreach( tlm.cosValues[i] ) begin
                     cosValues[i] = numToReal(tlm.cosValues[i]["sign"], tlm.cosValues[i]["mantissa"], tlm.cosValues[i]["exponent"]);
                     //$display("cos%s: %0f", i, cosValues[i]);
