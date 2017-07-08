@@ -143,8 +143,12 @@ class pipeline_scoreboard extends base_scoreboard;
                     `uvm_warning("ADDER_MODULE",$psprintf("OVERFLOW: Adder out value: %f. Expected value: %f.", out, expectedValue));
                     overFlow = 0;
                 end
-                else if(!(out < uRange) && out > dRange)
-                    `uvm_error("ADDER_MODULE",$psprintf(" ADDER OUT VALUE: %f. EXPECTED VALUE: %f.", out, expectedValue));
+                else if(!(out < uRange) && out > dRange) begin
+                    `uvm_error("ADDER_MODULE",$psprintf("ADDER OUT VALUE: %f. EXPECTED VALUE: %f.", out, expectedValue));
+                end
+                else begin
+                    `uvm_info("ADDER_MODULE",$psprintf("ADDER OUT VALUE: %f. EXPECTED VALUE: %f.", out, expectedValue),UVM_LOW);
+                end
             end
         end
     endtask : adder_checker
@@ -208,8 +212,12 @@ class pipeline_scoreboard extends base_scoreboard;
                     `uvm_warning("MULT_MODULE",$psprintf("OVERFLOW: Mult out value: %f. Expected value: %f.", out, expectedValue));
                     overFlow = 0;
                 end
-                else if(!(out < uRange) && out > dRange)
+                else if(!(out < uRange) && out > dRange) begin
                     `uvm_error("MULT_MODULE",$psprintf(" MULT OUT VALUE: %f. EXPECTED VALUE: %f.", out, expectedValue));
+                end
+                else begin
+                    `uvm_info("MULT_MODULE",$psprintf("MULT OUT VALUE: %f. EXPECTED VALUE: %f.", out, expectedValue),UVM_LOW);
+                end
             end
         end
     endtask : mult_checker
@@ -273,8 +281,12 @@ class pipeline_scoreboard extends base_scoreboard;
                     `uvm_warning("DIVIDER_MODULE",$psprintf("OVERFLOW: Divider out value: %f. Expected value: %f.", out, expectedValue));
                     overFlow = 0;
                 end
-                else if(!(out < uRange) && out > dRange)
+                else if(!(out < uRange) && out > dRange) begin
                     `uvm_error("DIVIDER_MODULE",$psprintf(" DIVIDER OUT VALUE: %f. EXPECTED VALUE: %f.", out, expectedValue));
+                end
+                else begin
+                    `uvm_info("DIVIDER_MODULE",$psprintf("DIVIDER OUT VALUE: %f. EXPECTED VALUE: %f.", out, expectedValue),UVM_LOW);
+                end
             end
         end
     endtask : divider_checker
@@ -287,6 +299,7 @@ class pipeline_scoreboard extends base_scoreboard;
         real X_p = 0.0, Y_p = 0.0, Z_p = 0.0, X_c = 0.0, Y_c = 0.0, Z_c = 0.0, X_expected = 0.0, Y_expected = 0.0;
         real outX = 0.0, outY = 0.0;
         real uRangeX = 0.0, uRangeY = 0.0, dRangeX = 0.0, dRangeY = 0.0;
+        bit X_overflow, X_underflow, Y_overflow, Y_underflow;
         pipeline_tlm tlm;
         tlm = new();
 
@@ -334,6 +347,12 @@ class pipeline_scoreboard extends base_scoreboard;
                 Y_expected = (Y_c * camDc)/Z_c;
             end
             else if(tlm.tlm_type == PIPELINE_RESULT) begin
+                X_underflow = underflow(tlm.outX_sign, tlm.outX_mantissa, tlm.outX_exponent, X_expected);
+                X_overflow = overflow(tlm.outX_sign, tlm.outX_mantissa, tlm.outX_exponent, X_expected);
+
+                Y_underflow = underflow(tlm.outY_sign, tlm.outY_mantissa, tlm.outY_exponent, Y_expected);
+                Y_overflow = overflow(tlm.outY_sign, tlm.outY_mantissa, tlm.outY_exponent, Y_expected);
+
                 outX = numToReal(tlm.outX_sign, tlm.outX_mantissa, tlm.outX_exponent);
                 outY = numToReal(tlm.outY_sign, tlm.outY_mantissa, tlm.outY_exponent);
  
@@ -343,13 +362,35 @@ class pipeline_scoreboard extends base_scoreboard;
                 uRangeY = Y_expected + (Y_expected*precision);
                 dRangeY = Y_expected - (Y_expected*precision);
 
-                $display("\nTIME: %0d\nX_expected: %0f. Y_expected: %0f.", $time, X_expected, Y_expected);
-                $display("X: %0f. Y: %0f.", outX, outY);
-
-                if(!(outX < uRangeX) && outX > dRangeX)
+                if(X_underflow) begin
+                    `uvm_warning("PIPELINE_MODULE",$psprintf("UNDERFLOW: Pipeline outX value: %f. Expected value: %f.", outX, X_expected));
+                    X_underflow = 0;
+                end
+                else if(X_overflow) begin
+                    `uvm_warning("PIPELINE_MODULE",$psprintf("OVERFLOW: Pipeline outX value: %f. Expected value: %f.", outX, X_expected));
+                    X_overflow = 0;
+                end
+                else if(!(outX < uRangeX) && outX > dRangeX) begin
                     `uvm_error("PIPELINE_MODULE",$psprintf(" PIPELINE OUT_X VALUE: %f. EXPECTED X VALUE: %f.", outX, X_expected));
-                if(!(outY < uRangeY) && outY > dRangeY)
+                end
+                else begin
+                    `uvm_info("PIPELINE_MODULE",$psprintf("PIPELINE OUT_X VALUE: %f. EXPECTED X  VALUE: %f.", outX, X_expected),UVM_LOW);
+                end
+
+                if(Y_underflow) begin
+                    `uvm_warning("PIPELINE_MODULE",$psprintf("UNDERFLOW: Pipeline outY value: %f. Expected value: %f.", outY, Y_expected));
+                    Y_underflow = 0;
+                end
+                else if(Y_overflow) begin
+                    `uvm_warning("PIPELINE_MODULE",$psprintf("OVERFLOW: Pipeline outY value: %f. Expected value: %f.", outY, Y_expected));
+                    X_overflow = 0;
+                end
+                else if(!(outY < uRangeY) && outY > dRangeY) begin
                     `uvm_error("PIPELINE_MODULE",$psprintf(" PIPELINE OUT_Y VALUE: %f. EXPECTED Y VALUE: %f.", outY, Y_expected));
+                end
+                else begin
+                    `uvm_info("PIPELINE_MODULE",$psprintf("PIPELINE OUT_Y VALUE: %f. EXPECTED Y VALUE: %f.", outY, Y_expected),UVM_LOW);
+                end
             end
         end
     endtask : pipeline_checker

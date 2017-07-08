@@ -40,9 +40,12 @@ class sram_monitor extends base_monitor#(
                 if(ifc.write) begin
                     tlm.tlm_type = SRAM_WRITE;
                     tlm.data = ifc.data;
+                    gpu_log(file,"sram_monitor",$psprintf("WRITE request ------- Address: 0x%0h. Data: 0x%0h.", tlm.address, tlm.data));
                 end
-                else
+                else begin
                     tlm.tlm_type = SRAM_READ;
+                    gpu_log(file,"sram_monitor",$psprintf("READ request ------- Address: 0x%0h.", tlm.address));
+                end
 
                 ch_out.write(tlm);
         end

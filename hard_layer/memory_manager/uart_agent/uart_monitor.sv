@@ -80,7 +80,7 @@ class uart_monitor extends base_monitor#(
 
                     if(find(data) == 1) begin
                         tlm.tlm_cmd = data;
-                        gpu_log(file,"uart_driver",$psprintf("Executing: %s --------- Done\n", tlm.tlm_cmd.name));
+                        gpu_log(file,"uart_monitor",$psprintf("Executing: %s --------- Done\n", tlm.tlm_cmd.name));
                     end
                     else if (find(data) == 2) begin
                         tlm.tlm_cmd = COMPL;

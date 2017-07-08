@@ -14,6 +14,7 @@ class memctrl_scoreboard extends base_scoreboard;
     gpu_config CONFIG;
     state_enum state;
     uart_tlm tlm;
+    sram_tlm tlm_s;
 
     uvm_analysis_export#(uart_tlm)  uart_export;
     uvm_analysis_export#(sram_tlm)  sram_export;
@@ -61,6 +62,7 @@ class memctrl_scoreboard extends base_scoreboard;
     task run_phase(uvm_phase phase);
         fork
             main();
+            get_sram();
         join
     endtask : run_phase
 
@@ -491,4 +493,20 @@ class memctrl_scoreboard extends base_scoreboard;
     endtask : close
 
 
+    //--------------------------------------------
+    // values from sram
+    task get_sram();
+        forever begin
+            tlm_s = new();
+            sram_fifo.get(tlm_s);
+
+            if(tlm_s.tlm_type == SRAM_WRITE) begin
+                `uvm_info("SRAM_MODULE",$psprintf("WRITE REQUEST ------- ADDRESS: 0x%0h. DATA: 0x%0h", tlm_s.address, tlm_s.data),UVM_LOW);
+            end
+            else begin
+                `uvm_info("SRAM_MODULE",$psprintf("READ REQUEST ------- ADDRESS: 0x%0h.", tlm_s.address),UVM_LOW);
+            end
+ 
+        end
+    endtask : get_sram
 endclass : memctrl_scoreboard

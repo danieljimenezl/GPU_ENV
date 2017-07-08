@@ -195,7 +195,6 @@ module gpu_tb();
     assign sram_ifc.write = write;
     assign completeRequest = sram_ifc.completeRequest;
     assign sram_ifc.data = sram_data;
-    assign sram_data = sram_ifc.data;
     assign sram_ifc.base.clk = clk;
 
     always #5 clk <= !clk;
