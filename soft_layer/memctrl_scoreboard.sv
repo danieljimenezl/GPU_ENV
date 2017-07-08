@@ -125,14 +125,14 @@ class memctrl_scoreboard extends base_scoreboard;
 
         if ((tlm.tlm_type == UART_GPU_OUTPUT) && (tlm.tlm_cmd == COMPL)) begin
             if (tlm.data != complement) begin
-                `uvm_error("UART_MODULE",$psprintf("INIT RESPONSE NOT RECEIVED"));
+                `uvm_fatal("UART_MODULE",$psprintf("INIT RESPONSE NOT RECEIVED"));
             end
             else begin
                 `uvm_info("UART_MODULE",$psprintf("INIT STARTED"),UVM_LOW);
             end
         end
         else
-            `uvm_error("UART_MODULE",$psprintf("NOT RESPONSE RECEIVED"));
+            `uvm_fatal("UART_MODULE",$psprintf("NOT RESPONSE RECEIVED"));
 
         uart_fifo.get(tlm);
 
@@ -147,7 +147,7 @@ class memctrl_scoreboard extends base_scoreboard;
             if (tlm.tlm_type == UART_GPU_INPUT && tlm.tlm_cmd == INITIALIZE)
                 initialize();
             else
-                `uvm_error("UART_MODULE",$psprintf("BAD COMAND RECIEVED"));
+                `uvm_fatal("UART_MODULE",$psprintf("BAD COMAND RECIEVED"));
         end
 
         uart_fifo.get(tlm);
@@ -157,21 +157,21 @@ class memctrl_scoreboard extends base_scoreboard;
             `uvm_info("UART_MODULE",$psprintf("DRIVER INIT TRANSMITION COMPLETE"),UVM_LOW);
         end
         else
-            `uvm_error("UART_MODULE",$psprintf("BAD COMAND RECIEVED"));
+            `uvm_fatal("UART_MODULE",$psprintf("BAD COMAND RECIEVED"));
 
         uart_fifo.get(tlm);
         if (tlm.tlm_type == UART_GPU_OUTPUT && tlm.tlm_cmd == INITIALIZE) begin
             `uvm_info("UART_MODULE",$psprintf("ACK INIT TRANSMITION COMPLETE"),UVM_LOW);
         end
         else begin
-            `uvm_error("UART_MODULE",$psprintf("TRANSACTION UNFINISHED"));
+            `uvm_fatal("UART_MODULE",$psprintf("TRANSACTION UNFINISHED"));
         end
 
         uart_fifo.get(tlm);
         if (tlm.tlm_type == UART_GPU_INPUT && tlm.tlm_cmd == CAM_CONFIG)
             state = CAM;
         else
-            `uvm_error("UART_MODULE",$psprintf("EXPECTING CAM_CONFIG COMMAND"));
+            `uvm_fatal("UART_MODULE",$psprintf("EXPECTING CAM_CONFIG COMMAND"));
     endtask :initialize
 
 
@@ -186,14 +186,14 @@ class memctrl_scoreboard extends base_scoreboard;
 
         if ((tlm.tlm_type == UART_GPU_OUTPUT) && (tlm.tlm_cmd == COMPL)) begin
             if (tlm.data != complement) begin
-                `uvm_error("UART_MODULE",$psprintf("CAM_CONFIG RESPONSE NOT RECEIVED"));
+                `uvm_fatal("UART_MODULE",$psprintf("CAM_CONFIG RESPONSE NOT RECEIVED"));
             end
             else begin
                 `uvm_info("UART_MODULE",$psprintf("CAM_CONFIG STARTED"),UVM_LOW);
             end
         end
         else
-            `uvm_error("UART_MODULE",$psprintf("NOT RESPONSE RECEIVED"));
+            `uvm_fatal("UART_MODULE",$psprintf("NOT RESPONSE RECEIVED"));
 
         uart_fifo.get(tlm);
         uart_fifo.get(tlm);
@@ -207,14 +207,14 @@ class memctrl_scoreboard extends base_scoreboard;
             `uvm_info("UART_MODULE",$psprintf("DRIVER CAM_CONFIG TRANSMITION COMPLETE"),UVM_LOW);
         end
         else
-            `uvm_error("UART_MODULE",$psprintf("BAD COMAND RECIEVED"));
+            `uvm_fatal("UART_MODULE",$psprintf("BAD COMAND RECIEVED"));
 
         uart_fifo.get(tlm);
         if (tlm.tlm_type == UART_GPU_OUTPUT && tlm.tlm_cmd == CAM_CONFIG) begin
             `uvm_info("UART_MODULE",$psprintf("ACK CAM_CONFIG TRANSMITION COMPLETE"),UVM_LOW);
         end
         else begin
-            `uvm_error("UART_MODULE",$psprintf("TRANSACTION UNFINISHED"));
+            `uvm_fatal("UART_MODULE",$psprintf("TRANSACTION UNFINISHED"));
         end
 
         uart_fifo.get(tlm);
@@ -226,10 +226,10 @@ class memctrl_scoreboard extends base_scoreboard;
             else if(tlm.tlm_cmd == REFRESH)
                 state = REF;
             else
-                `uvm_error("UART_MODULE",$psprintf("NOT A VALID COMAND"));
+                `uvm_fatal("UART_MODULE",$psprintf("NOT A VALID COMAND"));
         end
         else
-            `uvm_error("UART_MODULE",$psprintf("NOT A VALID COMAND"));
+            `uvm_fatal("UART_MODULE",$psprintf("NOT A VALID COMAND"));
     endtask : camera
 
 
@@ -244,14 +244,14 @@ class memctrl_scoreboard extends base_scoreboard;
 
         if ((tlm.tlm_type == UART_GPU_OUTPUT) && (tlm.tlm_cmd == COMPL)) begin
             if (tlm.data != complement) begin
-                `uvm_error("UART_MODULE",$psprintf("CREATE_OBJECT RESPONSE NOT RECEIVED"));
+                `uvm_fatal("UART_MODULE",$psprintf("CREATE_OBJECT RESPONSE NOT RECEIVED"));
             end
             else begin
                 `uvm_info("UART_MODULE",$psprintf("CREATE_OBJECT STARTED"),UVM_LOW);
             end
         end
         else
-            `uvm_error("UART_MODULE",$psprintf("NOT RESPONSE RECEIVED"));
+            `uvm_fatal("UART_MODULE",$psprintf("NOT RESPONSE RECEIVED"));
 
         uart_fifo.get(tlm);
         uart_fifo.get(tlm);
@@ -284,21 +284,21 @@ class memctrl_scoreboard extends base_scoreboard;
             `uvm_info("UART_MODULE",$psprintf("DRIVER CREATE_OBJECT TRANSMITION COMPLETE"),UVM_LOW);
         end
         else
-            `uvm_error("UART_MODULE",$psprintf("BAD COMAND RECIEVED"));
+            `uvm_fatal("UART_MODULE",$psprintf("BAD COMAND RECIEVED"));
 
         uart_fifo.get(tlm);
         if (tlm.tlm_type == UART_GPU_OUTPUT && tlm.tlm_cmd == CREATE_OBJ) begin
             `uvm_info("UART_MODULE",$psprintf("ACK CREATE_OBJECT TRANSMITION COMPLETE"),UVM_LOW);
         end
         else begin
-            `uvm_error("UART_MODULE",$psprintf("TRANSACTION UNFINISHED"));
+            `uvm_fatal("UART_MODULE",$psprintf("TRANSACTION UNFINISHED"));
         end
 
         uart_fifo.get(tlm);
         if (tlm.tlm_type == UART_GPU_INPUT && tlm.tlm_cmd == ADD_VERT)
             state = VEC;
         else
-            `uvm_error("UART_MODULE",$psprintf("EXPECTING ADD_VERT  COMMAND"));
+            `uvm_fatal("UART_MODULE",$psprintf("EXPECTING ADD_VERT  COMMAND"));
     endtask : obj_create
 
 
@@ -313,14 +313,14 @@ class memctrl_scoreboard extends base_scoreboard;
 
         if ((tlm.tlm_type == UART_GPU_OUTPUT) && (tlm.tlm_cmd == COMPL)) begin
             if (tlm.data != complement) begin
-                `uvm_error("UART_MODULE",$psprintf("ADD_VERTEX RESPONSE NOT RECEIVED"));
+                `uvm_fatal("UART_MODULE",$psprintf("ADD_VERTEX RESPONSE NOT RECEIVED"));
             end
             else begin
                 `uvm_info("UART_MODULE",$psprintf("ADD_VERTEX STARTED"),UVM_LOW);
             end
         end
         else
-            `uvm_error("UART_MODULE",$psprintf("NOT RESPONSE RECEIVED"));
+            `uvm_fatal("UART_MODULE",$psprintf("NOT RESPONSE RECEIVED"));
 
         uart_fifo.get(tlm);
         if (tlm.tlm_type == UART_GPU_INPUT && tlm.tlm_cmd == DATA) begin
@@ -328,7 +328,7 @@ class memctrl_scoreboard extends base_scoreboard;
             `uvm_info("UART_MODULE",$psprintf("NUM OF VERTICES: %0d", vertices),UVM_LOW);
         end
         else begin
-            `uvm_error("UART_MODULE",$psprintf("NUM OF VERTEX NOT RECEIVED"));
+            `uvm_fatal("UART_MODULE",$psprintf("NUM OF VERTEX NOT RECEIVED"));
         end
 
         uart_fifo.get(tlm);
@@ -338,7 +338,7 @@ class memctrl_scoreboard extends base_scoreboard;
             `uvm_info("UART_MODULE",$psprintf("RECEIVING VERTICES"),UVM_LOW);
         end
         else begin
-            `uvm_error("UART_MODULE",$psprintf("BAD COMAND RECEIVED"));
+            `uvm_fatal("UART_MODULE",$psprintf("BAD COMAND RECEIVED"));
         end
 
         for(int i=0;i<(vertices*3);i++) begin
@@ -350,21 +350,21 @@ class memctrl_scoreboard extends base_scoreboard;
             `uvm_info("UART_MODULE",$psprintf("DRIVER ADD_VERTEX TRANSMITION COMPLETE"),UVM_LOW);
         end
         else
-            `uvm_error("UART_MODULE",$psprintf("BAD COMAND RECIEVED"));
+            `uvm_fatal("UART_MODULE",$psprintf("BAD COMAND RECIEVED"));
 
         uart_fifo.get(tlm);
         if (tlm.tlm_type == UART_GPU_OUTPUT && tlm.tlm_cmd == ADD_VERT) begin
             `uvm_info("UART_MODULE",$psprintf("ACK ADD_VERTEX TRANSMITION COMPLETE"),UVM_LOW);
         end
         else begin
-            `uvm_error("UART_MODULE",$psprintf("TRANSACTION UNFINISHED"));
+            `uvm_fatal("UART_MODULE",$psprintf("TRANSACTION UNFINISHED"));
         end
 
         uart_fifo.get(tlm);
         if (tlm.tlm_type == UART_GPU_INPUT && tlm.tlm_cmd == CLOSE_OBJ)
             state = CLO;
         else
-            `uvm_error("UART_MODULE",$psprintf("EXPECTING CLOSE_OBJ COMMAND"));
+            `uvm_fatal("UART_MODULE",$psprintf("EXPECTING CLOSE_OBJ COMMAND"));
     endtask : vertex
 
 
@@ -379,14 +379,14 @@ class memctrl_scoreboard extends base_scoreboard;
 
         if ((tlm.tlm_type == UART_GPU_OUTPUT) && (tlm.tlm_cmd == COMPL)) begin
             if (tlm.data != complement) begin
-                `uvm_error("UART_MODULE",$psprintf("CLOSE_OBJ RESPONSE NOT RECEIVED"));
+                `uvm_fatal("UART_MODULE",$psprintf("CLOSE_OBJ RESPONSE NOT RECEIVED"));
             end
             else begin
                 `uvm_info("UART_MODULE",$psprintf("CLOSE_OBJ STARTED"),UVM_LOW);
             end
         end
         else
-            `uvm_error("UART_MODULE",$psprintf("NOT RESPONSE RECEIVED"));
+            `uvm_fatal("UART_MODULE",$psprintf("NOT RESPONSE RECEIVED"));
 
         uart_fifo.get(tlm);
         uart_fifo.get(tlm);
@@ -396,14 +396,14 @@ class memctrl_scoreboard extends base_scoreboard;
             `uvm_info("UART_MODULE",$psprintf("DRIVER CLOSE_OBJECT TRANSMITION COMPLETE"),UVM_LOW);
         end
         else
-            `uvm_error("UART_MODULE",$psprintf("BAD COMAND RECIEVED"));
+            `uvm_fatal("UART_MODULE",$psprintf("BAD COMAND RECIEVED"));
 
         uart_fifo.get(tlm);
         if (tlm.tlm_type == UART_GPU_OUTPUT && tlm.tlm_cmd == CLOSE_OBJ) begin
             `uvm_info("UART_MODULE",$psprintf("ACK CLOSE_OBJ TRANSMITION COMPLETE"),UVM_LOW);
         end
         else begin
-            `uvm_error("UART_MODULE",$psprintf("TRANSACTION UNFINISHED"));
+            `uvm_fatal("UART_MODULE",$psprintf("TRANSACTION UNFINISHED"));
         end
 
         uart_fifo.get(tlm);
@@ -415,10 +415,10 @@ class memctrl_scoreboard extends base_scoreboard;
             else if(tlm.tlm_cmd == REFRESH)
                 state = REF;
             else
-                `uvm_error("UART_MODULE",$psprintf("NOT A VALID COMAND"));
+                `uvm_fatal("UART_MODULE",$psprintf("NOT A VALID COMAND"));
         end
         else
-            `uvm_error("UART_MODULE",$psprintf("NOT A VALID COMAND"));
+            `uvm_fatal("UART_MODULE",$psprintf("NOT A VALID COMAND"));
     endtask : close
 
 
@@ -433,21 +433,21 @@ class memctrl_scoreboard extends base_scoreboard;
 
         if ((tlm.tlm_type == UART_GPU_OUTPUT) && (tlm.tlm_cmd == COMPL)) begin
             if (tlm.data != complement) begin
-                `uvm_error("UART_MODULE",$psprintf("MODIFY_OBJ RESPONSE NOT RECEIVED"));
+                `uvm_fatal("UART_MODULE",$psprintf("MODIFY_OBJ RESPONSE NOT RECEIVED"));
             end
             else begin
                 `uvm_info("UART_MODULE",$psprintf("MODIFY_OBJ STARTED"),UVM_LOW);
             end
         end
         else
-            `uvm_error("UART_MODULE",$psprintf("NOT RESPONSE RECEIVED"));
+            `uvm_fatal("UART_MODULE",$psprintf("NOT RESPONSE RECEIVED"));
 
         uart_fifo.get(tlm);
         if (tlm.tlm_type == UART_GPU_INPUT && tlm.tlm_cmd == DATA) begin
             `uvm_info("UART_MODULE",$psprintf("MODIFING OBJECT: 0x:%h", tlm.data),UVM_LOW);
         end
         else
-            `uvm_error("UART_MODULE",$psprintf("BAD COMAND RECIEVED"));
+            `uvm_fatal("UART_MODULE",$psprintf("BAD COMAND RECIEVED"));
 
         uart_fifo.get(tlm);
         uart_fifo.get(tlm);
@@ -467,14 +467,14 @@ class memctrl_scoreboard extends base_scoreboard;
             `uvm_info("UART_MODULE",$psprintf("DRIVER MODIFY_OBJ TRANSMITION COMPLETE"),UVM_LOW);
         end
         else
-            `uvm_error("UART_MODULE",$psprintf("BAD COMAND RECIEVED"));
+            `uvm_fatal("UART_MODULE",$psprintf("BAD COMAND RECIEVED"));
 
         uart_fifo.get(tlm);
         if (tlm.tlm_type == UART_GPU_OUTPUT && tlm.tlm_cmd == MODIFY_OBJ) begin
             `uvm_info("UART_MODULE",$psprintf("ACK MODIFY_OBJ TRANSMITION COMPLETE"),UVM_LOW);
         end
         else begin
-            `uvm_error("UART_MODULE",$psprintf("TRANSACTION UNFINISHED"));
+            `uvm_fatal("UART_MODULE",$psprintf("TRANSACTION UNFINISHED"));
         end
 
         uart_fifo.get(tlm);
@@ -486,10 +486,10 @@ class memctrl_scoreboard extends base_scoreboard;
             else if(tlm.tlm_cmd == REFRESH)
                 state = REF;
             else
-                `uvm_error("UART_MODULE",$psprintf("NOT A VALID COMAND"));
+                `uvm_fatal("UART_MODULE",$psprintf("NOT A VALID COMAND"));
         end
         else
-            `uvm_error("UART_MODULE",$psprintf("NOT A VALID COMAND"));
+            `uvm_fatal("UART_MODULE",$psprintf("NOT A VALID COMAND"));
     endtask : close
 
 
